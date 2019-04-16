@@ -5,14 +5,15 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('mqtt2mqtt:server');
+var reqlib = require('app-root-path').require;
+var debug = reqlib('/lib/debug')('App');
 var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '8100');
 app.set('port', port);
 
 /**

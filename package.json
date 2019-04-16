@@ -5,19 +5,30 @@
   "author": "Daniel Lando <daniel.sorridi@gmail.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
-    "build": "node build/build.js"
+    "dev": "webpack-dev-server --inline --progress --host 0.0.0.0 --config build/webpack.dev.conf.js",
+    "dev:server": "nodemon bin/www",
+    "start": "node bin/www",
+    "lint": "eslint --ext .js,.vue src",
+    "build": "node build/build.js",
+    "pkg": "sudo chmod +x package.sh && ./package.sh"
   },
   "dependencies": {
-    "vue": "^2.5.2",
-    "vue-router": "^3.0.1",
+    "app-root-path": "^2.2.1",
+    "axios": "^0.18.0",
+    "axios-progress-bar": "^1.2.0",
+    "babel-polyfill": "^6.26.0",
+    "bluebird": "^3.5.4",
+    "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
     "ejs": "~2.5.7",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "vue": "^2.5.2",
+    "vue-router": "^3.0.1",
+    "vuetify": "^1.5.11"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
