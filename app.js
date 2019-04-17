@@ -4,9 +4,9 @@ logger = require('morgan'),
 cookieParser = require('cookie-parser'),
 bodyParser = require('body-parser'),
 app = express(),
-//jsonStore = reqlib('/lib/jsonStore.js'),
+jsonStore = reqlib('/lib/jsonStore.js'),
 cors = require('cors'),
-//store = reqlib('config/store.js'),
+store = reqlib('config/store.js'),
 debug = reqlib('/lib/debug')('App'),
 utils = reqlib('/lib/utils.js');
 
@@ -29,17 +29,19 @@ app.use(cors());
 
 //get settings
 app.get('/api/settings', function(req, res) {
-  var clients = [];
-  res.json({success:true, clients: clients});
+  res.json({success:true, clients: jsonStore.get(store.clients), values: jsonStore.get(store.values)});
+});
+
+//get clients
+app.get('/api/clients', function(req, res) {
+  res.json({success:true, clients: jsonStore.get(store.clients)});
 });
 
 //update settings
-app.post('/api/settings', function(req, res) {
-  jsonStore.put(store.settings, req.body)
+app.post('/api/clients', function(req, res) {
+  jsonStore.put(store.clients, req.body.clients)
   .then(data => {
     res.json({success: true, message: "Configuration updated successfully"});
-    gw.close();
-    startGateway();
   }).catch(err => {
     debug(err);
     res.json({success: false, message: err.message})

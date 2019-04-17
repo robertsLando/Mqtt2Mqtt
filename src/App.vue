@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app dark>
 
     <v-navigation-drawer
     clipped-left
@@ -72,6 +72,8 @@
 </template>
 
 <script>
+
+import ConfigApis from "@/apis/ConfigApis";
 
 export default {
   name: 'app',
@@ -152,11 +154,30 @@ export default {
       ],
       drawer: false,
       topbar: [],
-      title: 'Configuration',
+      title: 'MQTT Clients',
       mini: true,
       snackbar: false,
       snackbarText: ""
     }
+  },
+  mounted() {
+    var self = this;
+
+    ConfigApis.getSettings()
+      .then(data => {
+        if (!data.success) {
+          self.showSnackbar(
+            "Error while retriving settings, check console"
+          );
+          console.log(response);
+        } else {
+          self.$store.dispatch("init", data);
+        }
+      })
+      .catch(e => {
+        self.showSnackbar("Error while retriving settings, check console");
+        console.log(e);
+      });
   },
 	watch: {
   	'$route': function(value) {

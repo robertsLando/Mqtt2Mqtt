@@ -1,50 +1,81 @@
 /* eslint-disable */
 
 <template>
-  <v-container fluid grid-list-md>
+  <v-container fluid>
     <v-card>
       <v-card-text>
-        
-        <v-btn color="blue darken-1" flat @click="dialogValue = true">New Value</v-btn>
-
         <v-data-table
           :headers="headers"
-          :items="gateway.values"
+          :items="clients"
           :rows-per-page-items="[10, 20, {'text':'All','value':-1}]"
           class="elevation-1"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ deviceName(props.item.device) }}</td>
-            <td>{{ props.item.value.label + ' (' + props.item.value.value_id + ')' }}</td>
-            <td class="text-xs">{{ props.item.topic }}</td>
-            <td class="text-xs">{{ props.item.postOperation || 'No operation' }}</td>
-            <td
-              class="text-xs"
-            >{{ props.item.enablePoll ? ("Intensity " + props.item.pollIntensity) : 'No' }}</td>
-            <td class="text-xs">{{ props.item.verifyChanges ? "Verified" : 'Not Verified' }}</td>
+            <td>{{ props.item.name }}</td>
+            <td>{{ props.item.host }}</td>
+            <td>{{ props.item.port }}</td>
+            <td>{{ props.item.reconnectPeriod }}</td>
+            <td>{{ props.item.auth ? 'Required' : 'Not Required' }}</td>
+            <td>{{ props.item.clean ? 'Yes' : 'No' }}</td>
             <td class="justify-center layout px-0">
-              <v-icon small class="mr-2" color="green" @click="editItem(props.item)">edit</v-icon>
-              <v-icon small color="red" @click="deleteItem(props.item)">delete</v-icon>
+              <v-btn icon class="mx-0" @click="editItem(props.item)">
+                <v-icon color="teal">edit</v-icon>
+              </v-btn>
+              <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+                <v-icon color="pink">delete</v-icon>
+              </v-btn>
+              <v-btn icon class="mx-0" @click="cloneItem(props.item)">
+                <v-icon>content_copy</v-icon>
+              </v-btn>
             </td>
           </template>
         </v-data-table>
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="purple darken-1" flat @click="importSettings">
-          Import
-          <v-icon right dark>file_upload</v-icon>
-        </v-btn>
-        <v-btn color="green darken-1" flat @click="exportSettings">
-          Export
-          <v-icon right dark>file_download</v-icon>
-        </v-btn>
-        <v-btn color="blue darken-1" flat type="submit" form="form_settings">
-          Save
-          <v-icon right dark>save</v-icon>
-        </v-btn>
-      </v-card-actions>
     </v-card>
+
+    <!--FAB-->
+    <v-speed-dial light fab fixed bottom right v-model="fab">
+      <template v-slot:activator>
+        <v-btn slot="activator" color="blue darken-2" dark fab hover v-model="fab">
+          <v-icon>add</v-icon>
+          <v-icon>close</v-icon>
+        </v-btn>
+      </template>
+
+      <v-btn fab dark small color="green" @click.stop="dialogValue = true">
+        <v-icon>add_box</v-icon>
+      </v-btn>
+
+      <!-- <v-btn
+        v-if="selected && selected.length > 0"
+        fab
+        dark
+        small
+        color="red"
+        @click.stop="deleteSelected()"
+      >
+        <v-icon>delete</v-icon>
+      </v-btn>
+
+      <v-btn
+        v-if="selected && selected.length > 0"
+        fab
+        dark
+        small
+        color="yellow"
+        @click.stop="cloneSelected()"
+      >
+        <v-icon>content_copy</v-icon>
+      </v-btn>-->
+    </v-speed-dial>
+
+    <DialogClient
+      @save="saveValue"
+      @close="closeDialog"
+      v-model="dialogValue"
+      :title="dialogTitle"
+      :editedValue="editedValue"
+    />
   </v-container>
 </template>
 
@@ -52,50 +83,72 @@
 import { mapGetters } from "vuex";
 import ConfigApis from "@/apis/ConfigApis";
 
+import DialogClient from '@/components/dialogs/Mqtt_Client'
+
 export default {
   name: "Settings",
-  computed: {},
+  components:{
+    DialogClient
+  },
+  computed: {
+    dialogTitle () {
+      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+    },
+    ...mapGetters(["clients"])
+  },
+  watch: {
+    dialogValue (val) {
+      val || this.closeDialog()
+    }
+  },
   data() {
     return {
-      rules: {
-        required: value => {
-          var valid = false;
-
-          if (value instanceof Array) valid = value.length > 0;
-          else valid = !!value || value === 0;
-
-          return valid || "This field is required.";
-        },
-        validName: value => {
-          return (
-            !/[!@#$%^&*)(+=:,;"'\\|?{}£°§<>[\]/.\s]/g.test(value) ||
-            'Name is not valid, only "a-z" "A-Z" "0-9" chars and "_" are allowed'
-          );
-        }
-      }
+      dialogValue: false,
+      editedValue: {},
+      editedIndex: -1,
+      defaultValue: {},
+      headers: [
+        { text: "Name", value: "name" },
+        { text: "Host", value: "host" },
+        { text: "Port", value: "port" },
+        { text: "Reconnect (ms)", value: "reconnectPeriod" },
+        { text: "Auth", value: "auth" },
+        { text: "Clean", value: "clean" },
+        { text: "Actions", sortable: false }
+      ],
+      fab: false,
     };
   },
   methods: {
     showSnackbar(text) {
       this.$emit("showSnackbar", text);
     },
-    importSettings() {
-      var self = this;
-      this.$emit("import", "json", function(err, settings) {
-        if (settings.zwave && settings.mqtt && settings.gateway) {
-          self.$store.dispatch("import", settings);
-          self.showSnackbar("Configuration imported successfully");
-        } else {
-          self.showSnackbar("Imported settings not valid");
-        }
-      });
+    editItem (item) {
+      this.editedIndex = this.clients.indexOf(item)
+      this.editedValue = Object.assign({}, item)
+      this.dialogValue = true
     },
-    exportSettings() {
-      var settings = this.getSettingsJSON();
-      this.$emit("export", settings, "settings");
+    deleteItem (item) {
+      const index = this.clients.indexOf(item)
+      confirm('Are you sure you want to delete this item?') && this.clients.splice(index, 1)
     },
-    getSettingsJSON() {
-      return this.settings;
+    cloneItem (item) {
+      this.clients.push(Object.assign({}, item))
+    },
+    closeDialog () {
+      this.dialogValue = false
+      setTimeout(() => {
+        this.editedValue = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      }, 300)
+    },
+    saveValue () {
+      if (this.editedIndex > -1) {
+        Object.assign(this.clients[this.editedIndex], this.editedValue)
+      } else {
+        this.clients.push(this.editedValue)
+      }
+      this.closeDialog()
     },
     update() {
       if (this.$refs.form_settings.validate()) {
@@ -111,25 +164,6 @@ export default {
         this.showSnackbar("Your configuration contains errors, fix it");
       }
     }
-  },
-  mounted() {
-    // var self = this;
-    // this.$store.dispatch("init", data);
-    // ConfigApis.getConfig()
-    //   .then(data => {
-    //     if (!data.success) {
-    //       self.showSnackbar(
-    //         "Error while retriving configuration, check console"
-    //       );
-    //       console.log(response);
-    //     } else {
-    //       self.$store.dispatch("init", data);
-    //     }
-    //   })
-    //   .catch(e => {
-    //     self.showSnackbar("Error while retriving configuration, check console");
-    //     console.log(e);
-    //   });
   }
 };
 </script>

@@ -1,26 +1,24 @@
 export const state = {
-  settings: {}
+  clients: [],
+  values: []
 }
 
 export const getters = {
-  settings: state => state.settings
+  clients: state => state.clients,
+  values: values => state.values
 }
 
 export const actions = {
   init (store, data) {
     if(data){
-      store.commit('initSettings', data.settings);
+      store.commit('initSettings', data);
     }
-  },
-  import (store, settings) {
-    store.commit('initSettings', settings);
   }
 }
 
 export const mutations = {
-  initSettings(state, conf){
-    if(conf){
-      state.settings = conf.settings || {};
-    }
+  initSettings(state, data){
+      state.clients = data.clients || [];
+      state.values = data.values || [];
   }
 }
