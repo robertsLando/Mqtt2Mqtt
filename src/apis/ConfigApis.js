@@ -3,7 +3,8 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 
 if (process.env.NODE_ENV === 'development') {
-  axios.defaults.baseURL = axios.defaults.socketUrl + '/api'
+  // process.PORT is imported in config/dev.env.js
+  axios.defaults.baseURL = location.protocol + '//' + location.hostname + ':' + process.env.PORT + '/api'
 } else {
   axios.defaults.baseURL = '/api'
 }
@@ -17,14 +18,8 @@ export default{
         return response.data
       })
   },
-  getClients () {
-    return axios.get('/clients')
-      .then(response => {
-        return response.data
-      })
-  },
-  updateClients (data) {
-    return axios.post('/clients', data)
+  updateSettings (data) {
+    return axios.post('/settings', data)
       .then(response => {
         return response.data
       })

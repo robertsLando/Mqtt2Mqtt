@@ -27,6 +27,7 @@
     "http-errors": "~1.6.2",
     "jsonfile": "^5.0.0",
     "morgan": "~1.9.0",
+    "uniqid": "^5.0.3",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuetify": "^1.5.11",

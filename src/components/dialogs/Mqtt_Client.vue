@@ -13,7 +13,7 @@
                 <v-text-field
                   v-model="editedValue.name"
                   label="Name"
-                  :rules="[rules.required]"
+                  :rules="[rules.required, rules.validName]"
                   hint="A friendly name to describe this client"
                   required
                 ></v-text-field>
@@ -127,7 +127,6 @@ export default {
   data() {
     return {
       valid: true,
-      required: v => !!v || "This field is required",
       e1: false,
       rules: {
         required: value => {

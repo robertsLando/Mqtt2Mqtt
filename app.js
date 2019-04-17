@@ -27,26 +27,21 @@ app.use(cors());
 
 // ----- APIs ------
 
-//get settings
+// get settings
 app.get('/api/settings', function(req, res) {
   res.json({success:true, clients: jsonStore.get(store.clients), values: jsonStore.get(store.values)});
-});
+})
 
-//get clients
-app.get('/api/clients', function(req, res) {
-  res.json({success:true, clients: jsonStore.get(store.clients)});
-});
-
-//update settings
-app.post('/api/clients', function(req, res) {
+// update settings
+app.post('/api/settings', function(req, res) {
   jsonStore.put(store.clients, req.body.clients)
-  .then(data => {
-    res.json({success: true, message: "Configuration updated successfully"});
-  }).catch(err => {
-    debug(err);
+  .then(data => jsonStore.put(store.values, req.body.values))
+  .then(data => res.json({success: true, message: "Configuration updated successfully"}))
+  .catch(err => {
+    debug(err)
     res.json({success: false, message: err.message})
   })
-});
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

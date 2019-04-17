@@ -50,6 +50,26 @@
 
   <v-spacer></v-spacer>
 
+  <v-menu v-for="item in items" :key="item.text" bottom left>
+      <v-btn slot="activator" icon @click.native="item.func">
+        <v-tooltip bottom>
+        <v-icon dark color="primary" slot="activator">{{item.icon}}</v-icon>
+        <span>{{item.tooltip}}</span>
+      </v-tooltip>
+      </v-btn>
+
+      <v-list v-if="item.menu">
+        <v-list-tile
+          v-for="(menu, i) in item.menu"
+          :key="i"
+          @click="menu.func"
+        >
+          <v-list-tile-title>{{ menu.title }}</v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+
+    </v-menu>
+
 </v-toolbar>
 <main>
   <v-content>
@@ -74,19 +94,46 @@
 <script>
 
 import ConfigApis from "@/apis/ConfigApis";
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'app',
+  computed: mapGetters([
+    'values',
+    'clients'
+  ]),
   methods: {
     showSnackbar: function(text){
       this.snackbarText = text;
       this.snackbar = true;
     },
-    updateStatus: function(status, color){
-      this.status = status;
-      this.statusColor = color;
+    saveConfiguration: function(){
+      var self = this;
+      ConfigApis.updateSettings({
+        values: this.values,
+        clients: this.clients,
+      }).then(response => {
+        if(response.success) self.showSnackbar("New configuration successfully saved");
+        else{
+          self.showSnackbar(response.error.message);
+          console.log(response.error);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      })
     },
-    importFile : function(ext, callback)
+    importConfiguration : function(){
+      var self = this;
+
+      this.importFile((err, jsonObject) => {
+        if(!err){
+          self.$store.dispatch('init', jsonObject);
+          self.showSnackbar("Configuration loaded successfully")
+        }
+      });
+    },
+    importFile : function(callback)
     {
       var self = this;
       // Check for the various File API support.
@@ -105,20 +152,19 @@ export default {
 
             reader.addEventListener("load", function(fileReaderEvent)
             {
+              var jsonObject = {};
               var err;
               var data = fileReaderEvent.target.result;
 
-              if(ext == 'json'){
-                try {
-                  data = JSON.parse(data);
-                } catch (e) {
-                  self.showSnackbar("Error while parsing input file, check console for more info")
-                  console.log(e);
-                  err = e;
-                }
+              try {
+                jsonObject = JSON.parse(data);
+              } catch (e) {
+                self.showSnackbar("Error while parsing input file, check console for more info")
+                console.log(e);
+                err = e;
               }
 
-              callback(err, data);
+              callback(err, jsonObject);
             });
 
             reader.readAsText(file);
@@ -133,15 +179,17 @@ export default {
         alert('Unable to load a file in this browser.');
       }
     },
-    exportConfiguration: function(data, fileName, ext){
-      var contentType = ext == 'xml' ? 'text/xml' : 'application/octet-stream';
+    exportConfiguration: function(){
+      var contentType = 'application/octet-stream';
       var a = document.createElement('a');
 
-      var blob = new Blob([ext == 'xml' ? data : JSON.stringify(data)], {'type': contentType});
+      var data = {values: this.values, clients: this.clients, version: 1}
+
+      var blob = new Blob([JSON.stringify(data)], {'type': contentType});
 
       document.body.appendChild(a);
       a.href = window.URL.createObjectURL(blob);
-      a.download = fileName + "." + (ext ? ext : "json");
+      a.download = "settings.json";
       a.target="_self";
       a.click();
     }
@@ -149,15 +197,32 @@ export default {
   data () {
     return {
       pages: [
-        { icon: 'widgets', title: 'Configuration', path: '/' },
-        { icon: 'settings', title: 'MQTT Clients', path: '/clients' }
+        { icon: 'wifi', title: 'MQTT Clients', path: '/clients' },
+        { icon: 'settings', title: 'Values', path: '/' }
       ],
       drawer: false,
       topbar: [],
       title: 'MQTT Clients',
       mini: true,
       snackbar: false,
-      snackbarText: ""
+      snackbarText: "",
+      items: [
+        {
+          icon: "file_download",
+          func: this.importConfiguration,
+          tooltip: "Import Configuration"
+        },
+        {
+          icon: "file_upload",
+          func: this.exportConfiguration,
+          tooltip: "Export Configuration",
+        },
+        {
+          icon: "save",
+          func: this.saveConfiguration,
+          tooltip: "Save Configuration"
+        },
+      ]
     }
   },
   mounted() {
@@ -185,8 +250,8 @@ export default {
         case 'MqttClients':
         this.title = 'MQTT Clients';
         break;
-        case 'Configuration':
-        this.title = 'Configuration';
+        case 'Values':
+        this.title = 'Values';
         break;
         default:
         this.title = '';

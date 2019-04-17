@@ -6,17 +6,17 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="clients"
+          :items="values"
           :rows-per-page-items="[10, 20, {'text':'All','value':-1}]"
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item.name }}</td>
-            <td>{{ props.item.host }}</td>
-            <td>{{ props.item.port }}</td>
-            <td>{{ props.item.reconnectPeriod }}</td>
-            <td>{{ props.item.auth ? 'Required' : 'Not Required' }}</td>
-            <td>{{ props.item.clean ? 'Yes' : 'No' }}</td>
+            <td>{{ getTopic(props.item.topicGet) }}</td>
+            <td>{{ getTopic(props.item.topicSet) }}</td>
+            <td>{{ getClient(props.item.client_id) }}</td>
+            <td>{{ props.item.payload }}</td>
+            <td>{{ props.item.qos }}</td>
+            <td>{{ props.item.retain ? 'Yes' : 'No' }}</td>
             <td class="justify-center layout px-0">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -69,7 +69,7 @@
       </v-btn>-->
     </v-speed-dial>
 
-    <DialogClient
+    <DialogValues
       @save="saveValue"
       @close="closeDialog"
       v-model="dialogValue"
@@ -82,20 +82,18 @@
 <script>
 import { mapGetters } from "vuex";
 
-import uniqid from 'uniqid'
-
-import DialogClient from '@/components/dialogs/Mqtt_Client'
+import DialogValues from '@/components/dialogs/Value'
 
 export default {
   name: "Settings",
   components:{
-    DialogClient
+    DialogValues
   },
   computed: {
     dialogTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-    ...mapGetters(["clients"])
+    ...mapGetters(["values", "clients"])
   },
   watch: {
     dialogValue (val) {
@@ -109,12 +107,12 @@ export default {
       editedIndex: -1,
       defaultValue: {},
       headers: [
-        { text: "Name", value: "name" },
-        { text: "Host", value: "host" },
-        { text: "Port", value: "port" },
-        { text: "Reconnect (ms)", value: "reconnectPeriod" },
-        { text: "Auth", value: "auth" },
-        { text: "Clean", value: "clean" },
+        { text: "Topic GET", value: "topicGet" },
+        { text: "Topic SET", value: "topicSet" },
+        { text: "Client", value: "client_id" },
+        { text: "Payload", value: "payload" },
+        { text: "QoS", value: "qos" },
+        { text: "Retain", value: "retain" },
         { text: "Actions", sortable: false }
       ],
       fab: false,
@@ -124,19 +122,24 @@ export default {
     showSnackbar(text) {
       this.$emit("showSnackbar", text);
     },
+    getTopic(topic){
+      return topic.from + " --> " + topic.to
+    },
+    getClient(id){
+      var client = this.clients.find(c => c._id == id);
+      return client ? client.name : "----"
+    },
     editItem (item) {
-      this.editedIndex = this.clients.indexOf(item)
+      this.editedIndex = this.values.indexOf(item)
       this.editedValue = Object.assign({}, item)
       this.dialogValue = true
     },
     deleteItem (item) {
-      const index = this.clients.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.clients.splice(index, 1)
+      const index = this.values.indexOf(item)
+      confirm('Are you sure you want to delete this item?') && this.values.splice(index, 1)
     },
     cloneItem (item) {
-      var copy = Object.assign({}, item);
-      copy._id = uniqid();
-      this.clients.push(copy)
+      this.values.push(Object.assign({}, item))
     },
     closeDialog () {
       this.dialogValue = false
@@ -147,10 +150,9 @@ export default {
     },
     saveValue () {
       if (this.editedIndex > -1) {
-        Object.assign(this.clients[this.editedIndex], this.editedValue)
+        Object.assign(this.values[this.editedIndex], this.editedValue)
       } else {
-        this.editedValue._id = uniqid(); //assign an unique id to the client
-        this.clients.push(this.editedValue)
+        this.values.push(this.editedValue)
       }
       this.closeDialog()
     }
