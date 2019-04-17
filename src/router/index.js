@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Settings from '@/components/Settings'
+import MqttClients from '@/components/MqttClients'
 
 Vue.use(Router)
 
@@ -8,9 +8,9 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/settings',
-      name: 'Settings',
-      component: Settings,
+      path: '/clients',
+      name: 'MqttClients',
+      component: MqttClients,
       props: true
     }
   ]

@@ -13,9 +13,9 @@
     <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
-            <!-- <v-list-tile-avatar>
+            <v-list-tile-avatar>
               <img style="border-radius: 0;" src="/static/logo.png" >
-            </v-list-tile-avatar> -->
+            </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title>Mqtt2Mqtt</v-list-tile-title>
             </v-list-tile-content>
@@ -147,12 +147,12 @@ export default {
   data () {
     return {
       pages: [
-        { icon: 'widgets', title: 'Broker', path: '/' },
-        { icon: 'settings', title: 'Settings', path: '/settings' }
+        { icon: 'widgets', title: 'Configuration', path: '/' },
+        { icon: 'settings', title: 'MQTT Clients', path: '/clients' }
       ],
       drawer: false,
       topbar: [],
-      title: 'Broker',
+      title: 'Configuration',
       mini: true,
       snackbar: false,
       snackbarText: ""
@@ -161,11 +161,11 @@ export default {
 	watch: {
   	'$route': function(value) {
       switch (value.name) {
-        case 'Settings':
-        this.title = 'Settings';
+        case 'MqttClients':
+        this.title = 'MQTT Clients';
         break;
-        case 'Broker':
-        this.title = 'Control Panel';
+        case 'Configuration':
+        this.title = 'Configuration';
         break;
         default:
         this.title = '';

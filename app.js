@@ -25,6 +25,27 @@ app.use('/', express.static(utils.joinPath(utils.getPath(), 'dist')));
 
 app.use(cors());
 
+// ----- APIs ------
+
+//get settings
+app.get('/api/settings', function(req, res) {
+  var clients = [];
+  res.json({success:true, clients: clients});
+});
+
+//update settings
+app.post('/api/settings', function(req, res) {
+  jsonStore.put(store.settings, req.body)
+  .then(data => {
+    res.json({success: true, message: "Configuration updated successfully"});
+    gw.close();
+    startGateway();
+  }).catch(err => {
+    debug(err);
+    res.json({success: false, message: err.message})
+  })
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
