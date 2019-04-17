@@ -17,7 +17,7 @@
               <img style="border-radius: 0;" src="/static/logo.png" >
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>Mqtt2Mqtt</v-list-tile-title>
+              <v-list-tile-title>MQTT To MQTT</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -198,11 +198,11 @@ export default {
     return {
       pages: [
         { icon: 'wifi', title: 'MQTT Clients', path: '/clients' },
-        { icon: 'settings', title: 'Values', path: '/' }
+        { icon: 'local_offer', title: 'Values', path: '/' }
       ],
       drawer: false,
       topbar: [],
-      title: 'MQTT Clients',
+      title: 'Values',
       mini: true,
       snackbar: false,
       snackbarText: "",
