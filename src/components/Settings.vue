@@ -7,7 +7,7 @@
         <v-form
           id="form_settings"
           @submit.prevent="update"
-          v-model="valid_zwave"
+          v-model="valid_settings"
           ref="form_settings"
         >
           <div slot="header">Mqtt</div>
@@ -124,18 +124,6 @@
               </v-layout>
             </v-card-text>
           </v-card>
-
-          <v-divider></v-divider>
-
-          <DialogGatewayValue
-            @save="saveValue"
-            @close="closeDialog"
-            v-model="dialogValue"
-            :gw_type="gateway.type"
-            :title="dialogTitle"
-            :editedValue="editedValue"
-            :devices="devices"
-          />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -161,13 +149,8 @@
 import { mapGetters } from "vuex";
 import ConfigApis from "@/apis/ConfigApis";
 
-import DialogGatewayValue from "@/components/dialogs/DialogGatewayValue";
-
 export default {
   name: "Settings",
-  components: {
-    DialogGatewayValue
-  },
   computed: {
     dialogTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
@@ -184,18 +167,9 @@ export default {
     },
     ...mapGetters(["settings"])
   },
-  watch: {
-    dialogValue(val) {
-      val || this.closeDialog();
-    }
-  },
   data() {
     return {
-      valid_zwave: true,
-      dialogValue: false,
-      editedValue: {},
-      editedIndex: -1,
-      defaultValue: {},
+      valid_settings: true,
       headers: [
         { text: "Device", value: "device" },
         { text: "Value", value: "value", sortable: false },
@@ -272,40 +246,7 @@ export default {
       this.$emit("export", settings, "settings");
     },
     getSettingsJSON() {
-      return {
-        mqtt: this.mqtt,
-        gateway: this.gateway,
-        zwave: this.zwave
-      };
-    },
-    editItem(item) {
-      this.editedIndex = this.gateway.values.indexOf(item);
-      this.editedValue = Object.assign({}, item);
-      this.dialogValue = true;
-    },
-    deleteItem(item) {
-      const index = this.gateway.values.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.gateway.values.splice(index, 1);
-    },
-    closeDialog() {
-      this.dialogValue = false;
-      setTimeout(() => {
-        this.editedValue = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-    deviceName(deviceID) {
-      var device = this.devices.find(d => d.value == deviceID);
-      return device ? device.name : deviceID;
-    },
-    saveValue() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.gateway.values[this.editedIndex], this.editedValue);
-      } else {
-        this.gateway.values.push(this.editedValue);
-      }
-      this.closeDialog();
+      return this.settings;
     },
     update() {
       if (this.$refs.form_settings.validate()) {
@@ -323,25 +264,29 @@ export default {
     }
   },
   mounted() {
-    //hide socket status indicator from toolbar
-    this.$emit("updateStatus");
+    
+    var data = {
+      settings: {
+      }
+    }
 
-    var self = this;
-    ConfigApis.getConfig()
-      .then(data => {
-        if (!data.success) {
-          self.showSnackbar(
-            "Error while retriving configuration, check console"
-          );
-          console.log(response);
-        } else {
-          self.$store.dispatch("init", data);
-        }
-      })
-      .catch(e => {
-        self.showSnackbar("Error while retriving configuration, check console");
-        console.log(e);
-      });
+    // this.$store.dispatch("init", data);
+    // var self = this;
+    // ConfigApis.getConfig()
+    //   .then(data => {
+    //     if (!data.success) {
+    //       self.showSnackbar(
+    //         "Error while retriving configuration, check console"
+    //       );
+    //       console.log(response);
+    //     } else {
+    //       self.$store.dispatch("init", data);
+    //     }
+    //   })
+    //   .catch(e => {
+    //     self.showSnackbar("Error while retriving configuration, check console");
+    //     console.log(e);
+    //   });
   }
 };
 </script>
