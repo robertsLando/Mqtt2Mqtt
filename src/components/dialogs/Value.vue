@@ -23,7 +23,18 @@
                 ></v-autocomplete>
               </v-flex>
 
-              <v-flex xs12>
+               <v-flex xs12 sm7>
+                <v-select
+                  v-model="editedValue.mode"
+                  label="Mode"
+                  hint="Specify if the broker need to subscribe (SET) or publish (GET) on this topic"
+                  persistent-hint
+                  required
+                  :items="optionsMode"
+                ></v-select>
+              </v-flex>
+
+              <v-flex xs12 sm5>
                 <v-switch
                   v-model="editedValue.customTopic"
                   persistent-hint
@@ -120,6 +131,7 @@ export default {
     return {
       valid: true,
       defaultOptions: { qos: -1, retain: 0, payload: 0, from: "", to: ""},
+      optionsMode: ["GET", "SET"],
       optionsRetain: [
         { text: "Keep original", value: 0 },
         { text: "False", value: 1 },

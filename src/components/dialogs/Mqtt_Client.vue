@@ -92,14 +92,41 @@
               </v-flex>
               <v-flex xs12>
                 <v-combobox
-                  v-model="editedValue.maps"
+                  v-model="editedValue.mapsGet"
                   :items="maps"
-                  label="Maps"
+                  label="Maps Get"
                   multiple
                   item-text="name"
                   item-value="_id"
                   chips
                   hint="Select the maps to use for incoming packets, if multiple maps of same client match the first one matched is used"
+                  persistent-hint
+                  :return-object="false"
+                >
+                  <template v-slot:selection="data">
+                    <v-chip
+                      :key="JSON.stringify(data.item)"
+                      :selected="data.selected"
+                      :disabled="data.disabled"
+                      class="v-chip--select-multi"
+                      close
+                      @input="data.parent.selectItem(data.item)"
+                    >
+                      {{ getItem(data) }}
+                    </v-chip>
+                  </template>
+                </v-combobox>
+              </v-flex>
+              <v-flex xs12>
+                <v-combobox
+                  v-model="editedValue.mapsSet"
+                  :items="maps"
+                  label="Maps Set"
+                  multiple
+                  item-text="name"
+                  item-value="_id"
+                  chips
+                  hint="Select the maps to use for outgoing packets, if multiple maps of same client match the first one matched is used"
                   persistent-hint
                   :return-object="false"
                 >

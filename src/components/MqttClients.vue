@@ -17,7 +17,8 @@
             <td>{{ props.item.reconnectPeriod }}</td>
             <td>{{ props.item.auth ? 'Required' : 'Not Required' }}</td>
             <td>{{ props.item.clean ? 'Yes' : 'No' }}</td>
-            <td>{{ getMaps(props.item) }}</td>
+            <td>{{ getMaps(props.item.mapsGet) }}</td>
+            <td>{{ getMaps(props.item.mapsSet) }}</td>
             <td class="justify-center layout px-0">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -116,7 +117,8 @@ export default {
         { text: "Reconnect (ms)", value: "reconnectPeriod" },
         { text: "Auth", value: "auth" },
         { text: "Clean", value: "clean" },
-        { text: "Maps", value: "maps" },
+        { text: "Maps GET", value: "mapsGet" },
+        { text: "Maps SET", value: "mapsSet" },
         { text: "Actions", sortable: false }
       ],
       fab: false,
@@ -126,16 +128,16 @@ export default {
     showSnackbar(text) {
       this.$emit("showSnackbar", text);
     },
-    getMaps(item){
+    getMaps(itemMaps){
       var result = ""
-      if(!item.maps){
+      if(!itemMaps){
         result = "Not defined"
       }
       else{
         var maps = this.maps
-        item.maps.forEach((id, i) => {
+        itemMaps.forEach((id, i) => {
           var t = maps.find(e => e._id == id);
-          result += (t ? t.name : id) + (i == item.maps.length - 1 ? '' : ', ');
+          result += (t ? t.name : id) + (i == itemMaps.length - 1 ? '' : ', ');
         });
       }
       return result;
