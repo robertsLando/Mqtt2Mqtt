@@ -5,9 +5,11 @@ cookieParser = require('cookie-parser'),
 bodyParser = require('body-parser'),
 app = express(),
 jsonStore = reqlib('/lib/jsonStore.js'),
-cors = require('cors'),
 store = reqlib('config/store.js'),
+cors = require('cors'),
+config = reqlib('config/app.js'),
 debug = reqlib('/lib/debug')('App'),
+broker = reqlib('lib/broker'),
 utils = reqlib('/lib/utils.js');
 
 debug("Application path:" + utils.getPath(true));
@@ -61,11 +63,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.redirect('/');
 });
-
-// BROKER MANAGEMENT
-
-
-
 
 // PROCESS MANAGEMENT
 
