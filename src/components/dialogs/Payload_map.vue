@@ -16,8 +16,16 @@
                   required
                 ></v-text-field>
               </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  v-model.trim="editedValue.wildecard"
+                  label="Wildecard Topic"
+                  hint="If incoming packets match this wildecard this map is used. Ex: if '#/set', 'a/b/set' and 'c/d/f/e/set' are valid"
+                  required
+                ></v-text-field>
+              </v-flex>
               <v-container fluid grid-list-xs pa-1>
-                <v-layout v-for="(prop, index) in editedValue.getMap" :key="index" wrap>
+                <v-layout v-for="(prop, index) in editedValue.payloadMap" :key="index" wrap>
                   <v-flex xs6>
                     <v-text-field
                       v-model.trim="prop.from"
@@ -36,7 +44,7 @@
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
-                <v-layout v-if="editedValue.getMap.length == 0" justify-center>
+                <v-layout v-if="editedValue.payloadMap.length == 0" justify-center>
                   <p>Press '+' to add a property map</p>
                 </v-layout>
                 <v-layout justify-center>
@@ -69,6 +77,7 @@ export default {
   },
   watch: {
     value(val) {
+      if(!this.editedValue.payloadMap) this.editedValue.payloadMap = [];
       this.$refs.form.resetValidation();
     }
   },

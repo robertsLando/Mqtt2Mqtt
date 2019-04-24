@@ -198,7 +198,8 @@ export default {
     return {
       pages: [
         { icon: 'wifi', title: 'MQTT Clients', path: '/clients' },
-        { icon: 'local_offer', title: 'Values', path: '/' }
+        { icon: 'local_offer', title: 'Values', path: '/' },
+        { icon: 'settings_ethernet', title: 'Payload Maps', path: '/payload_maps' }
       ],
       drawer: false,
       topbar: [],
@@ -252,6 +253,9 @@ export default {
         break;
         case 'Values':
         this.title = 'Values';
+        break;
+        case 'PayloadMaps':
+        this.title = 'Payload Maps';
         break;
         default:
         this.title = '';

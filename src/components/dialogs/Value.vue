@@ -37,7 +37,7 @@
                   label="Custom topic"
                 ></v-switch>
               </v-flex>
-              <v-flex xs12 v-bind="{[`sm-${topicEdited.customTopic ? 6 : 12}`]: true}">
+              <v-flex xs12 v-bind="{[`sm${topicEdited.customTopic ? 6 : 12}`]: true}">
                 <v-text-field
                   v-model.trim="topicEdited.from"
                   label="Topic"
@@ -74,7 +74,7 @@
                   :items="optionsQoS"
                 ></v-select>
               </v-flex>
-              <v-flex xs12 sm6>
+              <v-flex xs12 v-bind="{[`sm${topicEdited.payload == '3' ? 6 : 12}`]: true}">
                 <v-select
                   v-model="topicEdited.payload"
                   label="Payload"
@@ -84,17 +84,16 @@
                   :items="optionsPayload"
                 ></v-select>
               </v-flex>
-              <v-flex xs12 sm6>
+              <v-flex v-if="topicEdited.payload == '3'" xs12 sm6>
                 <v-autocomplete
                   v-model="topicEdited.map_id"
                   label="Payload map"
-                  :disabled="topicEdited.payload != '3'"
                   hint="Select the map function"
                   persistent-hint
                   required
                   item-text="name"
                   item-value="_id"
-                  :items="clients"
+                  :items="maps"
                 ></v-autocomplete>
               </v-flex>
             </v-layout>
@@ -140,7 +139,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["clients"])
+    ...mapGetters(["clients", "maps"])
   },
   methods: {
     clearTopic(){

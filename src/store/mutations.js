@@ -1,11 +1,13 @@
 export const state = {
   clients: [],
-  values: []
+  values: [],
+  maps: []
 }
 
 export const getters = {
   clients: state => state.clients,
-  values: values => state.values
+  values: state => state.values,
+  maps: state => state.maps
 }
 
 export const actions = {
@@ -20,5 +22,6 @@ export const mutations = {
   initSettings(state, data){
       state.clients = data.clients || [];
       state.values = data.values || [];
+      state.maps = data.maps || [];
   }
 }
