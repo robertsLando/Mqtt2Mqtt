@@ -23,31 +23,25 @@
                 ></v-autocomplete>
               </v-flex>
 
-              <v-toolbar style="box-shadow:none" dark tabs color="transparent">
-                <v-tabs v-model="tab" grow>
-                  <v-tab>Get</v-tab>
-                  <v-tab>Set</v-tab>
-                </v-tabs>
-              </v-toolbar>
               <v-flex xs12>
                 <v-switch
-                  v-model="topicEdited.customTopic"
+                  v-model="editedValue.customTopic"
                   persistent-hint
                   hint="Enable this to use a custom topic"
                   label="Custom topic"
                 ></v-switch>
               </v-flex>
-              <v-flex xs12 v-bind="{[`sm${topicEdited.customTopic ? 6 : 12}`]: true}">
+              <v-flex xs12 v-bind="{[`sm${editedValue.customTopic ? 6 : 12}`]: true}">
                 <v-text-field
-                  v-model.trim="topicEdited.from"
+                  v-model.trim="editedValue.from"
                   label="Topic"
-                  :append-outer-icon="topicEdited.customTopic ? 'arrow_right_alt' : ''"
+                  :append-outer-icon="editedValue.customTopic ? 'arrow_right_alt' : ''"
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex v-if="topicEdited.customTopic" xs12 sm6>
+              <v-flex v-if="editedValue.customTopic" xs12 sm6>
                 <v-text-field
-                  v-model.trim="topicEdited.to"
+                  v-model.trim="editedValue.to"
                   append-outer-icon="clear"
                   @click:append-outer="clearTopic"
                   label="Custom topic"
@@ -56,7 +50,7 @@
               </v-flex>
               <v-flex xs12 sm6>
                 <v-select
-                  v-model="topicEdited.retain"
+                  v-model="editedValue.retain"
                   label="Retain"
                   hint="The retain flag"
                   persistent-hint
@@ -66,7 +60,7 @@
               </v-flex>
               <v-flex xs12 sm6>
                 <v-select
-                  v-model="topicEdited.qos"
+                  v-model="editedValue.qos"
                   label="QoS"
                   hint="Quality of service"
                   persistent-hint
@@ -74,19 +68,9 @@
                   :items="optionsQoS"
                 ></v-select>
               </v-flex>
-              <v-flex xs12 v-bind="{[`sm${topicEdited.payload == '3' ? 6 : 12}`]: true}">
-                <v-select
-                  v-model="topicEdited.payload"
-                  label="Payload"
-                  hint="Choose how to parse the payload"
-                  persistent-hint
-                  required
-                  :items="optionsPayload"
-                ></v-select>
-              </v-flex>
-              <v-flex v-if="topicEdited.payload == '3'" xs12 sm6>
+              <v-flex xs12 sm6>
                 <v-autocomplete
-                  v-model="topicEdited.map_id"
+                  v-model="editedValue.map_id"
                   label="Payload map"
                   hint="Select the map function"
                   persistent-hint
@@ -122,20 +106,6 @@ export default {
   watch: {
     value(val) {
       this.$refs.form.resetValidation();
-      
-      if (!this.editedValue.getOptions) {
-        this.editedValue.getOptions = Object.assign({}, this.defaultOptions);
-      }
-
-      if (!this.editedValue.setOptions) {
-        this.editedValue.setOptions = Object.assign({}, this.defaultOptions);
-      }
-
-      this.topicEdited = this.editedValue.getOptions;
-    },
-     tab(val){
-      // topicEdited could be a computed property but for some reason isn't reacted on tab changes well
-      this.topicEdited = val == 0 ? this.editedValue.getOptions : this.editedValue.setOptions;
     }
   },
   computed: {
@@ -143,16 +113,13 @@ export default {
   },
   methods: {
     clearTopic(){
-      this.$set(this.topicEdited, 'to', "");
+      this.$set(this.editedValue, 'to', "");
     }
   },
   data() {
     return {
       valid: true,
-      topicEdited: {},
       defaultOptions: { qos: -1, retain: 0, payload: 0, from: "", to: ""},
-      tab: 0,
-      tabs: ["Get", "Set"],
       optionsRetain: [
         { text: "Keep original", value: 0 },
         { text: "False", value: 1 },
@@ -164,14 +131,6 @@ export default {
         { text: "1 (At least once)", value: 1 },
         { text: "2 (Exactly once)", value: 2 }
       ],
-      optionsPayload: [
-        { text: "Keep original", value: 0 },
-        { text: "Value --> JSON", value: 1 },
-        { text: "JSON --> Value", value: 2 },
-        { text: "JSON --> JSON", value: 3 }
-      ],
-      customGet: false,
-      customSet: false,
       required: v => !!v || "This field is required"
     };
   }

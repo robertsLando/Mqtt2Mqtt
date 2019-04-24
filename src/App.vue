@@ -99,8 +99,7 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'app',
   computed: mapGetters([
-    'values',
-    'clients'
+    'configuration'
   ]),
   methods: {
     showSnackbar: function(text){
@@ -109,10 +108,7 @@ export default {
     },
     saveConfiguration: function(){
       var self = this;
-      ConfigApis.updateSettings({
-        values: this.values,
-        clients: this.clients,
-      }).then(response => {
+      ConfigApis.updateSettings(this.configuration).then(response => {
         if(response.success) self.showSnackbar("New configuration successfully saved");
         else{
           self.showSnackbar(response.error.message);
@@ -183,7 +179,7 @@ export default {
       var contentType = 'application/octet-stream';
       var a = document.createElement('a');
 
-      var data = {values: this.values, clients: this.clients, version: 1}
+      var data = this.configuration;
 
       var blob = new Blob([JSON.stringify(data)], {'type': contentType});
 
@@ -227,7 +223,7 @@ export default {
     }
   },
   mounted() {
-    var self = this;
+    var self = this; 
 
     ConfigApis.getSettings()
       .then(data => {
@@ -237,7 +233,7 @@ export default {
           );
           console.log(response);
         } else {
-          self.$store.dispatch("init", data);
+          self.$store.dispatch("init", data.settings);
         }
       })
       .catch(e => {

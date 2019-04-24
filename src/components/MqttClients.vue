@@ -17,6 +17,7 @@
             <td>{{ props.item.reconnectPeriod }}</td>
             <td>{{ props.item.auth ? 'Required' : 'Not Required' }}</td>
             <td>{{ props.item.clean ? 'Yes' : 'No' }}</td>
+            <td>{{ getMaps(props.item) }}</td>
             <td class="justify-center layout px-0">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -95,7 +96,7 @@ export default {
     dialogTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-    ...mapGetters(["clients"])
+    ...mapGetters(["clients", "maps"])
   },
   watch: {
     dialogValue (val) {
@@ -115,6 +116,7 @@ export default {
         { text: "Reconnect (ms)", value: "reconnectPeriod" },
         { text: "Auth", value: "auth" },
         { text: "Clean", value: "clean" },
+        { text: "Maps", value: "maps" },
         { text: "Actions", sortable: false }
       ],
       fab: false,
@@ -123,6 +125,20 @@ export default {
   methods: {
     showSnackbar(text) {
       this.$emit("showSnackbar", text);
+    },
+    getMaps(item){
+      var result = ""
+      if(!item.maps){
+        result = "Not defined"
+      }
+      else{
+        var maps = this.maps
+        item.maps.forEach((id, i) => {
+          var t = maps.find(e => e._id == id);
+          result += (t ? t.name : id) + (i == item.maps.length - 1 ? '' : ', ');
+        });
+      }
+      return result;
     },
     editItem (item) {
       this.editedIndex = this.clients.indexOf(item)

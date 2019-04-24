@@ -29,13 +29,12 @@ app.use(cors());
 
 // get settings
 app.get('/api/settings', function(req, res) {
-  res.json({success:true, clients: jsonStore.get(store.clients), values: jsonStore.get(store.values)});
+  res.json({success:true, settings: jsonStore.get(store.settings)});
 })
 
 // update settings
 app.post('/api/settings', function(req, res) {
-  jsonStore.put(store.clients, req.body.clients)
-  .then(data => jsonStore.put(store.values, req.body.values))
+  jsonStore.put(store.settings, req.body)
   .then(data => res.json({success: true, message: "Configuration updated successfully"}))
   .catch(err => {
     debug(err)
@@ -62,6 +61,13 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.redirect('/');
 });
+
+// BROKER MANAGEMENT
+
+
+
+
+// PROCESS MANAGEMENT
 
 process.on('SIGINT', function() {
   debug('Closing...');

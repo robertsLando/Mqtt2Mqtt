@@ -90,6 +90,33 @@
                   :type="e1 ? 'password' : 'text'"
                 ></v-text-field>
               </v-flex>
+              <v-flex xs12>
+                <v-combobox
+                  v-model="editedValue.maps"
+                  :items="maps"
+                  label="Maps"
+                  multiple
+                  item-text="name"
+                  item-value="_id"
+                  chips
+                  hint="Select the maps to use for incoming packets, if multiple maps of same client match the first one matched is used"
+                  persistent-hint
+                  :return-object="false"
+                >
+                  <template v-slot:selection="data">
+                    <v-chip
+                      :key="JSON.stringify(data.item)"
+                      :selected="data.selected"
+                      :disabled="data.disabled"
+                      class="v-chip--select-multi"
+                      close
+                      @input="data.parent.selectItem(data.item)"
+                    >
+                      {{ getItem(data) }}
+                    </v-chip>
+                  </template>
+                </v-combobox>
+              </v-flex>
             </v-layout>
           </v-form>
         </v-container>
@@ -105,11 +132,13 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: {
     value: Boolean,
     title: String,
-    editedValue: Object,
+    editedValue: Object
   },
   watch: {
     value(val) {
@@ -117,12 +146,25 @@ export default {
     }
   },
   computed: {
-    requiredUser(){
-      return (this.editedValue.auth && !!this.editedValue.username) || 'This field is required.'
+    ...mapGetters(["maps"]),
+    requiredUser() {
+      return (
+        (this.editedValue.auth && !!this.editedValue.username) ||
+        "This field is required."
+      );
     },
-    requiredPassword(){
-      return (this.editedValue.auth && !!this.editedValue.password) || 'This field is required.'
-    },
+    requiredPassword() {
+      return (
+        (this.editedValue.auth && !!this.editedValue.password) ||
+        "This field is required."
+      );
+    }
+  },
+  methods: {
+    getItem(data) {
+      var item = this.maps.find(m => m._id == data.item);
+      return item ? item.name : data.item;
+    }
   },
   data() {
     return {

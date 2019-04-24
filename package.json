@@ -13,6 +13,7 @@
     "pkg": "sudo chmod +x package.sh && ./package.sh"
   },
   "dependencies": {
+    "aedes": "^0.38.0",
     "app-root-path": "^2.2.1",
     "axios": "^0.18.0",
     "axios-progress-bar": "^1.2.0",
@@ -25,8 +26,12 @@
     "ejs": "~2.5.7",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
+    "install": "^0.12.2",
     "jsonfile": "^5.0.0",
     "morgan": "~1.9.0",
+    "mqtt": "^2.18.8",
+    "mqtt-wildcard": "^3.0.9",
+    "npm": "^6.9.0",
     "uniqid": "^5.0.3",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
