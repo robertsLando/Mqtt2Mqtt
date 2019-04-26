@@ -60,23 +60,24 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>
-                <v-select
+                <v-switch
                   v-model="editedValue.retain"
                   label="Retain"
                   hint="The retain flag"
+                  :rules="[required]"
                   persistent-hint
                   required
-                  :items="optionsRetain"
-                ></v-select>
+                ></v-switch>
               </v-flex>
               <v-flex xs12 sm6>
                 <v-select
                   v-model="editedValue.qos"
                   label="QoS"
                   hint="Quality of service"
+                  :rules="[required]"
                   persistent-hint
                   required
-                  :items="optionsQoS"
+                  :items="[0,1,2]"
                 ></v-select>
               </v-flex>
               <v-flex xs12 sm6>
@@ -132,17 +133,6 @@ export default {
       valid: true,
       defaultOptions: { qos: -1, retain: 0, payload: 0, from: "", to: ""},
       optionsMode: ["GET", "SET"],
-      optionsRetain: [
-        { text: "Keep original", value: 0 },
-        { text: "False", value: 1 },
-        { text: "True", value: 2 }
-      ],
-      optionsQoS: [
-        { text: "Keep original", value: -1 },
-        { text: "0", value: 0 },
-        { text: "1 (At least once)", value: 1 },
-        { text: "2 (Exactly once)", value: 2 }
-      ],
       required: v => !!v || "This field is required"
     };
   }

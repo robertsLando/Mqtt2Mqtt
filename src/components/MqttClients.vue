@@ -36,40 +36,9 @@
     </v-card>
 
     <!--FAB-->
-    <v-speed-dial light fab fixed bottom right v-model="fab">
-      <template v-slot:activator>
-        <v-btn slot="activator" color="blue darken-2" dark fab hover v-model="fab">
-          <v-icon>add</v-icon>
-          <v-icon>close</v-icon>
-        </v-btn>
-      </template>
-
-      <v-btn fab dark small color="green" @click.stop="dialogValue = true">
-        <v-icon>add_box</v-icon>
-      </v-btn>
-
-      <!-- <v-btn
-        v-if="selected && selected.length > 0"
-        fab
-        dark
-        small
-        color="red"
-        @click.stop="deleteSelected()"
-      >
-        <v-icon>delete</v-icon>
-      </v-btn>
-
-      <v-btn
-        v-if="selected && selected.length > 0"
-        fab
-        dark
-        small
-        color="yellow"
-        @click.stop="cloneSelected()"
-      >
-        <v-icon>content_copy</v-icon>
-      </v-btn>-->
-    </v-speed-dial>
+    <v-btn fab bottom right dark fixed color="blue" @click.stop="dialogValue = true">
+        <v-icon>add</v-icon>
+    </v-btn>
 
     <DialogClient
       @save="saveValue"

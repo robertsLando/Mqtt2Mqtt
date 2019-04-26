@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 
-var app = require('../app')
 var reqlib = require('app-root-path').require
 var store = reqlib('/config/store.js')
 var debug = reqlib('/lib/debug')('App')
@@ -17,6 +16,8 @@ var http = require('http')
 // if jsonstore fails exit the application
 jsonStore.init(store)
   .then((data) => {
+
+    var app = require('../app')
 
     /**
      * Normalize a port into a number, string, or false.

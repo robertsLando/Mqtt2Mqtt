@@ -99,7 +99,7 @@
                   item-text="name"
                   item-value="_id"
                   chips
-                  hint="Select the maps to use for incoming packets, if multiple maps of same client match the first one matched is used"
+                  hint="Select the maps to use for incoming packets"
                   persistent-hint
                   :return-object="false"
                 >
@@ -126,7 +126,7 @@
                   item-text="name"
                   item-value="_id"
                   chips
-                  hint="Select the maps to use for outgoing packets, if multiple maps of same client match the first one matched is used"
+                  hint="Select the maps to use for outgoing packets"
                   persistent-hint
                   :return-object="false"
                 >

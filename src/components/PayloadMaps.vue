@@ -12,10 +12,10 @@
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.name }}</td>
-            <td>{{ props.item.wFrom + (props.item.wTo ? ' ---> ' + props.item.wTo : '') }}</td>
+            <td>{{ props.item.wFrom + (props.item.customTopic ? ' ---> ' + props.item.wTo : '') }}</td>
             <td style="white-space:pre-wrap; word-wrap:break-word">{{ getMap(props.item) }}</td>
-            <td>{{ optionsQoS.find(e => e.value == props.item.qos).text }}</td>
-            <td>{{ optionsRetain.find(e => e.value == props.item.retain).text }}</td>
+            <td>{{ props.item.qos }}</td>
+            <td>{{ props.item.retain ? "Yes" : "No" }}</td>
             <td class="justify-center">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -32,41 +32,10 @@
       </v-card-text>
     </v-card>
 
-    <!--FAB-->
-    <v-speed-dial light fab fixed bottom right v-model="fab">
-      <template v-slot:activator>
-        <v-btn slot="activator" color="blue darken-2" dark fab hover v-model="fab">
-          <v-icon>add</v-icon>
-          <v-icon>close</v-icon>
-        </v-btn>
-      </template>
-
-      <v-btn fab dark small color="green" @click.stop="dialogValue = true">
-        <v-icon>add_box</v-icon>
-      </v-btn>
-
-      <!-- <v-btn
-        v-if="selected && selected.length > 0"
-        fab
-        dark
-        small
-        color="red"
-        @click.stop="deleteSelected()"
-      >
-        <v-icon>delete</v-icon>
-      </v-btn>
-
-      <v-btn
-        v-if="selected && selected.length > 0"
-        fab
-        dark
-        small
-        color="yellow"
-        @click.stop="cloneSelected()"
-      >
-        <v-icon>content_copy</v-icon>
-      </v-btn>-->
-    </v-speed-dial>
+     <!--FAB-->
+    <v-btn fab bottom right dark fixed color="blue" @click.stop="dialogValue = true">
+        <v-icon>add</v-icon>
+    </v-btn>
 
     <DialogMap
       @save="saveValue"
@@ -75,8 +44,6 @@
       :title="dialogTitle"
       :editedValue="editedValue"
       :optionsPayload="optionsPayload"
-      :optionsRetain="optionsRetain"
-      :optionsQoS="optionsQoS"
     />
     
   </v-container>
@@ -113,17 +80,6 @@ export default {
         { text: "Value --> JSON", value: 1 },
         { text: "JSON --> Value", value: 2 },
         { text: "JSON --> JSON", value: 3 }
-      ],
-      optionsRetain: [
-        { text: "Keep original", value: 0 },
-        { text: "False", value: 1 },
-        { text: "True", value: 2 }
-      ],
-      optionsQoS: [
-        { text: "Keep original", value: -1 },
-        { text: "0", value: 0 },
-        { text: "1 (At least once)", value: 1 },
-        { text: "2 (Exactly once)", value: 2 }
       ],
       editedIndex: -1,
       defaultValue: { payloadMap: [] },

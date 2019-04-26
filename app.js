@@ -37,7 +37,10 @@ app.get('/api/settings', function(req, res) {
 // update settings
 app.post('/api/settings', function(req, res) {
   jsonStore.put(store.settings, req.body)
-  .then(data => res.json({success: true, message: "Configuration updated successfully"}))
+  .then(data => {
+    broker.restart();
+    res.json({success: true, message: "Configuration updated successfully"})
+  })
   .catch(err => {
     debug(err)
     res.json({success: false, message: err.message})
@@ -70,5 +73,8 @@ process.on('SIGINT', function() {
   debug('Closing...');
   process.exit();
 });
+
+
+broker.init();
 
 module.exports = app;

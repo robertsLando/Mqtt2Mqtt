@@ -19,41 +19,51 @@
               </v-flex>
               <v-flex xs12>
                 <v-switch
-                  v-model="editedValue.customW"
+                  v-model="editedValue.customTopic"
                   persistent-hint
-                  hint="Enable this to use a custom wildecard"
+                  hint="Enable this to map topics using wildecards"
                   label="Custom Wildecard"
                 ></v-switch>
               </v-flex>
-              <v-flex xs12 v-bind="{[`sm${editedValue.customW ? 6 : 12}`]: true}">
+              <v-flex xs12 v-bind="{[`sm${editedValue.customTopic ? 6 : 12}`]: true}">
                 <v-text-field
                   v-model.trim="editedValue.wFrom"
+                  :rules="[validTopic]"
                   label="Wildecard From"
-                  :append-outer-icon="editedValue.customW ? 'arrow_right_alt' : ''"
-                  hint="If incoming packets match this wildecard this map is used. Ex: if '#/set', 'a/b/set' and 'c/d/f/e/set' are valid"
+                  :append-outer-icon="editedValue.customTopic ? 'arrow_right_alt' : ''"
+                  hint="Catch incoming packets using this wildecard"
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex v-if="editedValue.customW" xs12 sm6>
+              <v-flex v-if="editedValue.customTopic" xs12 sm6>
                 <v-text-field
                   v-model.trim="editedValue.wTo"
+                  :rules="[validTopic]"
                   label="Wildecard To"
                   append-outer-icon="clear"
                   @click:append-outer="clearWildecard"
-                  hint="Map topics using this wildecard. Ex: '#/set' --> 'my/#/set' : 'c/d/f/e/set' --> my/c/d/f/e/set"
+                  hint="Map packets topics using this wildecard. Ex: 'prefix/#' --> 'prefix2/#' : 'prefix/c/d/f/e' --> prefix2/c/d/f/e"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex v-if="editedValue.customTopic" xs12>
+                <v-text-field
+                  v-model.trim="editedValue.wSuffix"
+                  :rules="[validSuffix]"
+                  label="From suffix"
+                  hint="Checks that incoming packets topic have this suffix. This is used because prefix/#/suffix wildecards are not allowed"
                   required
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>
-                <v-select
+                <v-switch
                   v-model="editedValue.retain"
                   label="Retain"
                   hint="The retain flag"
                   :rules="[required]"
                   persistent-hint
                   required
-                  :items="optionsRetain"
-                ></v-select>
+                ></v-switch>
               </v-flex>
               <v-flex xs12 sm6>
                 <v-select
@@ -63,7 +73,7 @@
                   :rules="[required]"
                   persistent-hint
                   required
-                  :items="optionsQoS"
+                  :items="[0,1,2]"
                 ></v-select>
               </v-flex>
               <v-flex xs12>
@@ -136,9 +146,7 @@ export default {
     value: Boolean,
     title: String,
     editedValue: Object,
-    optionsPayload: Array,
-    optionsRetain: Array,
-    optionsQoS: Array
+    optionsPayload: Array
   },
   watch: {
     value(val) {
@@ -149,7 +157,31 @@ export default {
   data() {
     return {
       valid: true,
-      required: v => !!v || v == 0 || "This field is required"
+      required: v => !!v || v == 0 || "This field is required",
+      validSuffix: v => (!v || v[0] != '/') || "Suffix cannot start with / char",
+      validTopic: topic => { // https://github.com/mqttjs/MQTT.js/blob/master/lib/validations.js#L12
+        var parts = topic.split("/");
+        var res = true;
+
+        for (var i = 0; i < parts.length; i++) {
+          if (parts[i] === "+") {
+            continue;
+          }
+
+          if (parts[i] === "#") {
+            // for Rule #2
+            res = i === parts.length - 1 || "# char must be placed at the end";
+            break;
+          }
+
+          if (parts[i].indexOf("+") !== -1 || parts[i].indexOf("#") !== -1) {
+            res = "Chars + and # are wildecards and cannot be used as chars in topic level names"
+            break;
+          }
+        }
+
+        return res;
+      }
     };
   },
   methods: {
