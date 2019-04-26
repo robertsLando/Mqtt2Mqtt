@@ -9,9 +9,17 @@ Fully configurable Mqtt to Mqtt gateway.
 
 ## Why
 
-There is almost an MQTT gateway for every protocol out there. The problem in some cases is every gateway maps reads and writes in different ways depending on the protocol used. There isn't a standard way to map a protocol in MQTT topics and also there is not standard payload, some works with a JSON payload with different properties, others use a payload with just a numeric value and so on. This gateway inits his custom broker and sits between your MQTT gateways (or MQTT devices) and your broker. Here is an example schema:
+There is almost an MQTT gateway for every protocol out there.
+
+The problem is every gateway maps reads and writes in different ways depending on the protocol used. There isn't a standard way to map a protocol in MQTT topics and also there isn't a standard payload, some sends a JSON payload with different properties (like `val` or `value` or `data` for the value and `tms` `time` `timestamp` for the timestamp/date), others use a payload with just a numeric value.
+
+This gateway inits an MQTT broker that sits between your MQTT gateways (or devices) and your broker. 
+
+Here is an example schema of how it works:
 
 ![Diagram](images/sketch_diagram.png)
+
+Note here there are some bold text **GET/SET** **from/to**. More about them in docs
 
 ## :electric_plug: Installation
 
