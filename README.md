@@ -13,7 +13,7 @@ There is almost an MQTT gateway for every protocol out there.
 
 The problem is every gateway maps reads and writes in different ways depending on the protocol used. There isn't a standard way to map a protocol in MQTT topics and also there isn't a standard payload, some sends a JSON payload with different properties (like `val` or `value` or `data` for the value and `tms` `time` `timestamp` for the timestamp/date), others use a payload with just a numeric value.
 
-This gateway inits an MQTT broker that sits between your MQTT gateways (or devices) and your broker. 
+This gateway inits an MQTT broker that sits between your MQTT gateways (or devices) and your broker to parse incoming/outgoing MQTT messages from/to your broker in the format you need.
 
 Here is an example schema of how it works:
 
