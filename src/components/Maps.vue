@@ -53,7 +53,7 @@
 <script>
 import { mapGetters } from "vuex";
 
-import DialogMap from "@/components/dialogs/Payload_map";
+import DialogMap from "@/components/dialogs/map";
 import uniqid from "uniqid";
 
 const defaultValue = { payloadMap: [] }

@@ -193,13 +193,13 @@ export default {
   data () {
     return {
       pages: [
-        { icon: 'wifi', title: 'MQTT Clients', path: '/clients' },
-        { icon: 'local_offer', title: 'Values', path: '/' },
-        { icon: 'settings_ethernet', title: 'Payload Maps', path: '/payload_maps' }
+        { icon: 'wifi', title: 'MQTT Clients', path: '/' },
+        { icon: 'local_offer', title: 'Values', path: '/values' },
+        { icon: 'settings_ethernet', title: 'Maps', path: '/maps' }
       ],
       drawer: false,
       topbar: [],
-      title: 'Values',
+      title: 'MQTT Clients',
       mini: true,
       snackbar: false,
       snackbarText: "",
@@ -250,8 +250,8 @@ export default {
         case 'Values':
         this.title = 'Values';
         break;
-        case 'PayloadMaps':
-        this.title = 'Payload Maps';
+        case 'Maps':
+        this.title = 'Maps';
         break;
         default:
         this.title = '';

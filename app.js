@@ -74,7 +74,6 @@ process.on('SIGINT', function() {
   process.exit();
 });
 
-
 broker.init();
 
 module.exports = app;

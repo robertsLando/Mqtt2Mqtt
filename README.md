@@ -39,6 +39,23 @@ npm run build
 npm start
 ```
 
+## How it works
+
+Once the app is running open the web browser to http://localhost:8100. Here you need to declare the Mqtt clients, the maps and (optionally) the values.
+
+### MQTT Clients
+
+- **Name**: A unique name that identify the Client.
+- **Host**: The url to the broker
+- **Port**: Broker port
+- **Reconnect period**: Milliseconds between two reconnection tries
+- **QoS**: Quality Of Service (check MQTT specs) of outgoing packets
+- **Retain**: The retain flag of outgoing packets
+- **Clean**: Sets the clean flag when connecting to the broker
+- **Store**: Enable/Disable persistent storage of packets (QoS > 0). If disabled in memory storage will be used but all packets stored in memory are lost in case of shutdowns or unexpected errors.
+- **Auth**: Enable this if broker requires auth. If so you need to enter also a valid **username** and **password**.
+
+
 ## :pencil: TODOs
 
 - [ ] Dockerize application
