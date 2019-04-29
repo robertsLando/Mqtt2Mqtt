@@ -80,12 +80,50 @@ Set of rules to use for incoming/outgoing packets
 
 #### Wildecards
 
-| Topic From       | Wildecard From | Wildecard To | Topic To          |
-| ---------------- | :------------- | :----------- | :---------------- |
-| prefix/get/a/b/c | prefix/get/#   | myprefix/#   | myprefix/a/b/c    |
-| prefix/get/a/b/c | +/get/+/b/c    | myprefix/+/+ | myprefix/prefix/a |
-| prefix/get/a/b/c | +/get/#        | +/z/#        | prefix/z/a/b/c    |
-    
+| Topic From | Wildecard From | Wildecard To | Topic To       |
+| :--------- | :------------- | :----------- | :------------- |
+| a/b/c/d/e  | a/b/#          | myprefix/#   | myprefix/c/d/e |
+| a/b/c/d/e  | +/b/+/d/e      | myprefix/+/+ | myprefix/a/c   |
+| a/b/c/d/e  | +/b/#          | +/my/#       | a/my/c/d/e     |
+
+#### Payload
+
+- **Payload**: Value --> JSON
+- **Value Property**: `"myvalue"`
+
+    `25`  --->  `{ "myvalue": 25}`
+
+---
+
+- **Payload**: JSON --> Value
+- **Value Property**: `"myvalue"`
+
+    `{ "myvalue": 25}`  --->  `25`
+
+---
+
+- **Payload**: JSON --> JSON
+- **Paylod JSON**:
+
+    | From | To    |
+    | :--- | :---- |
+    | val  | value |
+    | tms  | time  |
+
+    `{ "val": 25, "tms": 1556548668373}`  --->  `{ "value": 25, "time": 1556548668373}`
+
+### Values
+
+If you don't want to map all values coming from the gateway but just some values you can add the values you want here using fixed topics instead of wildecards
+
+- **Client**: The Mqtt client to connect to
+- **Mode**: Is this value used to *GET* updates from a gateway and forwarding them to your broker or is used to *SET* values? Check the [sketch]("#Why") for more info about GET and SET
+- **Custom Topic**: Enable this to change the original topic
+- **Topic**: The topic where messages come from
+- **Custom Topic**: If **Custom topic** is enabled here you can add the destination topic where the packet received will be forwarded
+- **Retain**: Sets the retain flag of the outgoing packet
+- **QoS**: Sets the QoS level of the outgoing packet
+- **Payload Map**: Select the map to use to use to parse the payload, all other map values like retain, qos and wildecards are ignored
 
 ## :pencil: TODOs
 
