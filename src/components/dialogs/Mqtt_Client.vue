@@ -49,10 +49,10 @@
               </v-flex>
               <v-flex xs6>
                 <v-switch
-                  hint="Enable this to use in memory store instead of persistent store for QoS > 0 packets"
+                  hint="Enable this to use persistent storage for QoS > 0 packets"
                   persistent-hint
-                  label="In memory store"
-                  v-model="editedValue.memoryStore"
+                  label="Persistent storage"
+                  v-model="editedValue.store"
                 ></v-switch>
               </v-flex>
               <v-flex xs6>
