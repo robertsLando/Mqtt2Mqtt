@@ -39,22 +39,53 @@ npm run build
 npm start
 ```
 
-## How it works
+## Usage
 
 Once the app is running open the web browser to http://localhost:8100. Here you need to declare the Mqtt clients, the maps and (optionally) the values.
 
 ### MQTT Clients
 
+Used to init a connection to an MQTT broker
+
 - **Name**: A unique name that identify the Client.
 - **Host**: The url to the broker
 - **Port**: Broker port
 - **Reconnect period**: Milliseconds between two reconnection tries
-- **QoS**: Quality Of Service (check MQTT specs) of outgoing packets
-- **Retain**: The retain flag of outgoing packets
-- **Clean**: Sets the clean flag when connecting to the broker
 - **Store**: Enable/Disable persistent storage of packets (QoS > 0). If disabled in memory storage will be used but all packets stored in memory are lost in case of shutdowns or unexpected errors.
+- **Clean**: Sets the clean flag when connecting to the broker
 - **Auth**: Enable this if broker requires auth. If so you need to enter also a valid **username** and **password**.
+- **Maps Get**: List of maps to use for value updates coming from other gateways to forward to your broker
+- **Maps Set**: List of maps to use for value writes coming from your broker to forward to the gateways.
 
+## Maps
+
+Set of rules to use for incoming/outgoing packets
+
+- **Name**: A unique name that identify the map.
+- **Custom Wildecard**: Enable this to customize the topic
+- **Wildecard From**: The topic wildecard to use to identify packets that need to be parsed using this map.
+- **Wildecard To**: If custom wildecard is enabled this field is used to specify the wildecard to use to transform the original topic to the destination topic (more about this later).
+- **From suffix**: The suffix to add to the from wildecard. If a packet topic matches the wildecard but doesn't have this suffix it is discarded. This filed is needed because wildecards like `prefix/#/suffix` are not valid wildecards as after a # char the topic cannot have anything.
+- **To suffix**: The suffix to add to the destination topic after the wildecards conversion is done.
+- **Retain**: Sets the retain flag of the outgoing packet
+- **QoS**: Sets the QoS level of the outgoing packet
+- **Payload**: The type of payload conversion.
+  - *Keep original*: The payload is not changed
+  - *Value --> JSON*: The incoming payload is expected to be a raw value and I want to create a JSON object with a **Value Property** set to that value
+  - *JSON --> Value*: The incoming payload is expected to be a JSON Object and I want to send a raw value payload using **Value Property** of original payload
+  - *JSON --> JSON*: The incoming payload is expected to be a JSON Object and I want to map properties to another JSON object. If this option is choosed I will need to add a set of property **From** and **To**
+- **Add timestamp**: Can be used when destination payload is a JSON object, if enabled I can add a time property (the name of the prioperty needs to be specified in **Time property**) to outgoing packets and the value will be `Date.now()`, the timestamp when the original packet is received.
+
+### Examples
+
+#### Wildecards
+
+| Topic From       | Wildecard From | Wildecard To | Topic To          |
+| ---------------- | :------------- | :----------- | :---------------- |
+| prefix/get/a/b/c | prefix/get/#   | myprefix/#   | myprefix/a/b/c    |
+| prefix/get/a/b/c | +/get/+/b/c    | myprefix/+/+ | myprefix/prefix/a |
+| prefix/get/a/b/c | +/get/#        | +/z/#        | prefix/z/a/b/c    |
+    
 
 ## :pencil: TODOs
 
