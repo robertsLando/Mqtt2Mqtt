@@ -44,6 +44,7 @@
       :title="dialogTitle"
       :editedValue="editedValue"
       :optionsPayload="optionsPayload"
+      :optionsTime="optionsTime"
     />
     
   </v-container>
@@ -54,6 +55,8 @@ import { mapGetters } from "vuex";
 
 import DialogMap from "@/components/dialogs/Payload_map";
 import uniqid from "uniqid";
+
+const defaultValue = { payloadMap: [] }
 
 export default {
   name: "Settings",
@@ -74,15 +77,19 @@ export default {
   data() {
     return {
       dialogValue: false,
-      editedValue: { payloadMap: [] },
+      editedValue: Object.assign({}, defaultValue),
       optionsPayload: [
         { text: "Keep original", value: 0 },
         { text: "Value --> JSON", value: 1 },
         { text: "JSON --> Value", value: 2 },
         { text: "JSON --> JSON", value: 3 }
       ],
+      optionsTime: [
+        { text: "Don't set", value: 0 },
+        { text: "Use property", value: 1 },
+        { text: "Add property", value: 2 }
+      ],
       editedIndex: -1,
-      defaultValue: { payloadMap: [] },
       headers: [
         { text: "Name", value: "name" },
         { text: "Wildecard", value: "wildecard" },
@@ -142,7 +149,7 @@ export default {
     closeDialog() {
       this.dialogValue = false;
       setTimeout(() => {
-        this.editedValue = Object.assign({}, this.defaultValue);
+        this.editedValue = Object.assign({}, defaultValue);
         this.editedIndex = -1;
       }, 300);
     },

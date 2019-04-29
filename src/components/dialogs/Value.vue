@@ -46,6 +46,7 @@
                 <v-text-field
                   v-model.trim="editedValue.from"
                   label="Topic"
+                  :rules="[validTopic]"
                   :append-outer-icon="editedValue.customTopic ? 'arrow_right_alt' : ''"
                   required
                 ></v-text-field>
@@ -54,6 +55,7 @@
                 <v-text-field
                   v-model.trim="editedValue.to"
                   append-outer-icon="clear"
+                  :rules="[validTopic]"
                   @click:append-outer="clearTopic"
                   label="Custom topic"
                   required
@@ -64,7 +66,6 @@
                   v-model="editedValue.retain"
                   label="Retain"
                   hint="The retain flag"
-                  :rules="[required]"
                   persistent-hint
                   required
                 ></v-switch>
@@ -84,7 +85,7 @@
                 <v-autocomplete
                   v-model="editedValue.map_id"
                   label="Payload map"
-                  hint="Select the map function"
+                  hint="Select the map function to use for the payload. All other map values like retain qos and wildecard are ignored"
                   persistent-hint
                   required
                   item-text="name"
@@ -133,7 +134,8 @@ export default {
       valid: true,
       defaultOptions: { qos: -1, retain: 0, payload: 0, from: "", to: ""},
       optionsMode: ["GET", "SET"],
-      required: v => !!v || "This field is required"
+      required: v => !!v || v === 0 || "This field is required",
+      validTopic: v => !/[#+\s]+/.test(v) || "Whitespace and wildecard (#, +) charaters are not allowed on topics"
     };
   }
 };

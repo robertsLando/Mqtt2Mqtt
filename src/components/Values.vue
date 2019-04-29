@@ -11,13 +11,13 @@
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ getTopic(props.item.topicGet) }}</td>
-            <td>{{ getTopic(props.item.topicSet) }}</td>
             <td>{{ getClient(props.item.client_id) }}</td>
-            <td>{{ props.item.payload }}</td>
+            <td>{{props.item.mode }}</td>
+            <td>{{ getTopic(props.item) }}</td>
+            <td>{{ getMap(props.item.map_id) }}</td>
             <td>{{ props.item.qos }}</td>
             <td>{{ props.item.retain ? 'Yes' : 'No' }}</td>
-            <td class="justify-center layout px-0">
+            <td class="justify-center">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
               </v-btn>
@@ -62,7 +62,7 @@ export default {
     dialogTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-    ...mapGetters(["values", "clients"])
+    ...mapGetters(["values", "clients", "maps"])
   },
   watch: {
     dialogValue (val) {
@@ -76,10 +76,10 @@ export default {
       editedIndex: -1,
       defaultValue: {},
       headers: [
-        { text: "Topic GET", value: "topicGet" },
-        { text: "Topic SET", value: "topicSet" },
         { text: "Client", value: "client_id" },
-        { text: "Payload", value: "payload" },
+        { text: "Mode", value: "mode" },
+        { text: "Topic", value: "topicFrom" },
+        { text: "Map", value: "map_id" },
         { text: "QoS", value: "qos" },
         { text: "Retain", value: "retain" },
         { text: "Actions", sortable: false }
@@ -91,12 +91,16 @@ export default {
     showSnackbar(text) {
       this.$emit("showSnackbar", text);
     },
-    getTopic(topic){
-      return topic.from + " --> " + topic.to
+    getTopic(item){
+      return item.customTopic ? item.from + " --> " + item.to : item.from
     },
     getClient(id){
       var client = this.clients.find(c => c._id == id);
       return client ? client.name : "----"
+    },
+    getMap(id){
+      var map = this.maps.find(m => m._id == id);
+      return map ? map.name : "----"
     },
     editItem (item) {
       this.editedIndex = this.values.indexOf(item)

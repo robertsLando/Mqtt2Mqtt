@@ -19,7 +19,7 @@
             <td>{{ props.item.clean ? 'Yes' : 'No' }}</td>
             <td>{{ getMaps(props.item.mapsGet) }}</td>
             <td>{{ getMaps(props.item.mapsSet) }}</td>
-            <td class="justify-center layout px-0">
+            <td class="justify-center">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
               </v-btn>

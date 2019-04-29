@@ -46,12 +46,21 @@
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex v-if="editedValue.customTopic" xs12>
+              <v-flex v-if="editedValue.customTopic" xs12 sm6>
                 <v-text-field
-                  v-model.trim="editedValue.wSuffix"
+                  v-model.trim="editedValue.suffixFrom"
                   :rules="[validSuffix]"
                   label="From suffix"
-                  hint="Checks that incoming packets topic have this suffix. This is used because prefix/#/suffix wildecards are not allowed"
+                  hint="Checks that incoming packets topic have this suffix. If not packet is ignored. Used because prefix/#/suffix wildecards are not allowed"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex v-if="editedValue.customTopic" xs12 sm6>
+                <v-text-field
+                  v-model.trim="editedValue.suffixTo"
+                  :rules="[validSuffix]"
+                  label="To suffix"
+                  hint="Adds the current suffix to outgoing packets. Used because prefix/#/suffix wildecards are not allowed"
                   required
                 ></v-text-field>
               </v-flex>
@@ -60,7 +69,6 @@
                   v-model="editedValue.retain"
                   label="Retain"
                   hint="The retain flag"
-                  :rules="[required]"
                   persistent-hint
                   required
                 ></v-switch>
@@ -126,6 +134,22 @@
                   </v-btn>
                 </v-layout>
               </v-container>
+              <v-flex v-if="editedValue.payload == '1' || editedValue.payload == '3'" xs12 sm6>
+                <v-switch
+                  v-model="editedValue.addTime"
+                  label="Add timestamp"
+                  hint="Enable this flag to add a timestamp property"
+                  persistent-hint
+                ></v-switch>
+              </v-flex>
+              <v-flex v-if="editedValue.addTime" xs12 sm6>
+                <v-text-field
+                  v-model.trim="editedValue.timeValue"
+                  label="Time property"
+                  hint="The payload property to use as time"
+                  required
+                ></v-text-field>
+              </v-flex>
             </v-layout>
           </v-form>
         </v-container>
@@ -160,7 +184,7 @@ export default {
       required: v => !!v || v == 0 || "This field is required",
       validSuffix: v => (!v || v[0] != '/') || "Suffix cannot start with / char",
       validTopic: topic => { // https://github.com/mqttjs/MQTT.js/blob/master/lib/validations.js#L12
-        var parts = topic.split("/");
+        var parts = topic ? topic.split("/") : [];
         var res = true;
 
         for (var i = 0; i < parts.length; i++) {
