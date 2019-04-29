@@ -117,7 +117,7 @@ Set of rules to use for incoming/outgoing packets
 If you don't want to map all values coming from the gateway but just some values you can add the values you want here using fixed topics instead of wildecards
 
 - **Client**: The Mqtt client to connect to
-- **Mode**: Is this value used to *GET* updates from a gateway and forwarding them to your broker or is used to *SET* values? Check the [sketch]("#why") for more info about GET and SET
+- **Mode**: Is this value used to *GET* updates from a gateway and forwarding them to your broker or is used to *SET* values? Check the [sketch]("https://github.com/robertsLando/Mqtt2Mqtt#why") for more info about GET and SET
 - **Custom Topic**: Enable this to change the original topic
 - **Topic**: The topic where messages come from
 - **Custom Topic**: If **Custom topic** is enabled here you can add the destination topic where the packet received will be forwarded
