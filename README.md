@@ -41,7 +41,7 @@ npm start
 
 ## Usage
 
-Once the app is running open the web browser to http://localhost:8100. Here you need to declare the Mqtt clients, the maps and (optionally) the values.
+Once the app is running open the web browser to <http://localhost:8100.> Here you need to declare the Mqtt clients, the maps and (optionally) the values.
 
 ### MQTT Clients
 
