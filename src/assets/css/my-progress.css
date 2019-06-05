@@ -1,3 +1,29 @@
 #nprogress .spinner {
     right: 50% !important;
 }
+
+/* Custom Scrollbar */
+
+/* Firefox */
+html,
+body {
+  scrollbar-color: rgba(255, 255, 255, 0.05) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  height: 5px;
+  width: 4px;
+  background: transparent;
+  padding-right: 10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1ex;
+  -webkit-border-radius: 1ex;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
