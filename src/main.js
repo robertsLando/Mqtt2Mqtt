@@ -13,7 +13,7 @@ import 'vuetify/dist/vuetify.min.css'
 import 'axios-progress-bar/dist/nprogress.css'
 
 // Custom assets CSS JS
-require('./assets/css/my-progress.css')
+require('./assets/css/customize.css')
 
 Vue.use(Vuetify)
 

@@ -17,25 +17,34 @@
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex xs12>
+              <v-flex xs6>
                 <v-switch
                   v-model="editedValue.customTopic"
+                  @change="customChanged"
                   persistent-hint
                   hint="Enable this to map topics using wildecards"
-                  label="Custom Wildecard"
+                  label="Custom Topic"
                 ></v-switch>
               </v-flex>
-              <v-flex xs12 v-bind="{[`sm${editedValue.customTopic ? 6 : 12}`]: true}">
+              <v-flex v-if="editedValue.customTopic" xs6>
+              <v-switch
+                v-model="editedValue.useFunction"
+                persistent-hint
+                hint="Use a JS function to map topics and payloads"
+                label="Use Function"
+              ></v-switch>
+            </v-flex>
+              <v-flex xs12 v-bind="{[`sm${editedValue.customTopic && !editedValue.useFunction ? 6 : 12}`]: true}">
                 <v-text-field
                   v-model.trim="editedValue.wFrom"
                   :rules="[validTopic]"
                   label="Wildecard From"
-                  :append-outer-icon="editedValue.customTopic ? 'arrow_right_alt' : ''"
+                  :append-outer-icon="editedValue.customTopic && !editedValue.useFunction ? 'arrow_right_alt' : ''"
                   hint="Catch incoming packets using this wildecard"
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex v-if="editedValue.customTopic" xs12 sm6>
+              <v-flex v-if="editedValue.customTopic && !editedValue.useFunction" xs12 sm6>
                 <v-text-field
                   v-model.trim="editedValue.wTo"
                   :rules="[validTopic]"
@@ -46,7 +55,7 @@
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex v-if="editedValue.customTopic" xs12 sm6>
+              <v-flex v-if="editedValue.customTopic && !editedValue.useFunction" xs12 sm6>
                 <v-text-field
                   v-model.trim="editedValue.suffixFrom"
                   :rules="[validSuffix]"
@@ -55,7 +64,7 @@
                   required
                 ></v-text-field>
               </v-flex>
-              <v-flex v-if="editedValue.customTopic" xs12 sm6>
+              <v-flex v-if="editedValue.customTopic && !editedValue.useFunction" xs12 sm6>
                 <v-text-field
                   v-model.trim="editedValue.suffixTo"
                   :rules="[validSuffix]"
@@ -84,7 +93,7 @@
                   :items="[0,1,2]"
                 ></v-select>
               </v-flex>
-              <v-flex xs12>
+              <v-flex v-if="!editedValue.useFunction" xs12>
                 <v-select
                   v-model="editedValue.payload"
                   label="Payload"
@@ -95,7 +104,7 @@
                   :items="optionsPayload"
                 ></v-select>
               </v-flex>
-              <v-flex v-if="editedValue.payload == '1' || editedValue.payload == '2'" xs12>
+              <v-flex v-if="!editedValue.useFunction && (editedValue.payload == '1' || editedValue.payload == '2')" xs12>
                 <v-text-field
                   v-model.trim="editedValue.payloadValue"
                   label="Value property"
@@ -103,7 +112,7 @@
                   required
                 ></v-text-field>
               </v-flex>
-              <v-container v-if="editedValue.payload == '3'" fluid grid-list-xs pa-1>
+              <v-container v-if="!editedValue.useFunction && editedValue.payload == '3'" fluid grid-list-xs pa-1>
                 <v-subheader>Payload JSON</v-subheader>
 
                 <v-layout v-for="(prop, index) in editedValue.payloadMap" :key="index" wrap>
@@ -134,7 +143,7 @@
                   </v-btn>
                 </v-layout>
               </v-container>
-              <v-flex v-if="editedValue.payload == '1' || editedValue.payload == '3'" xs12 sm6>
+              <v-flex v-if="!editedValue.useFunction && (editedValue.payload == '1' || editedValue.payload == '3')" xs12 sm6>
                 <v-switch
                   v-model="editedValue.addTime"
                   label="Add timestamp"
@@ -142,7 +151,7 @@
                   persistent-hint
                 ></v-switch>
               </v-flex>
-              <v-flex v-if="editedValue.addTime" xs12 sm6>
+              <v-flex v-if="!editedValue.useFunction && editedValue.addTime" xs12 sm6>
                 <v-text-field
                   v-model.trim="editedValue.timeValue"
                   label="Time property"
@@ -151,6 +160,11 @@
                 ></v-text-field>
               </v-flex>
             </v-layout>
+            <v-container v-if="editedValue.customTopic && editedValue.useFunction">
+              <br>
+              <p>Write the function here. Args are <code>topic</code> and <code>payload</code>. The function must return a json <code>{topic : "mappedTopic", payload: "mappedPayload"}</code>. <b>Attention:</b> both payload and topic must be type of <code>string</code></p>
+              <prism-editor :lineNumbers="true" v-model="editedValue.code" language="js" style="height:250px"></prism-editor>
+            </v-container>
           </v-form>
         </v-container>
       </v-card-text>
@@ -165,7 +179,18 @@
 </template>
 
 <script>
+
+import "prismjs"
+import "prismjs/themes/prism-tomorrow.css"
+//vue-prism-editor dependency
+import "vue-prism-editor/dist/VuePrismEditor.css"
+
+import PrismEditor from "vue-prism-editor";
+
 export default {
+  components: {
+    PrismEditor
+  },
   props: {
     value: Boolean,
     title: String,
@@ -175,6 +200,7 @@ export default {
   watch: {
     value(val) {
       if (!this.editedValue.payloadMap) this.editedValue.payloadMap = [];
+      if(!this.editedValue.code) this.editedValue.code = 'return {topic: topic, payload: payload}'
       this.$refs.form.resetValidation();
     }
   },
@@ -182,8 +208,9 @@ export default {
     return {
       valid: true,
       required: v => !!v || v == 0 || "This field is required",
-      validSuffix: v => (!v || v[0] != '/') || "Suffix cannot start with / char",
-      validTopic: topic => { // https://github.com/mqttjs/MQTT.js/blob/master/lib/validations.js#L12
+      validSuffix: v => !v || v[0] != "/" || "Suffix cannot start with / char",
+      validTopic: topic => {
+        // https://github.com/mqttjs/MQTT.js/blob/master/lib/validations.js#L12
         var parts = topic ? topic.split("/") : [];
         var res = true;
 
@@ -199,7 +226,8 @@ export default {
           }
 
           if (parts[i].indexOf("+") !== -1 || parts[i].indexOf("#") !== -1) {
-            res = "Chars + and # are wildecards and cannot be used as chars in topic level names"
+            res =
+              "Chars + and # are wildecards and cannot be used as chars in topic level names";
             break;
           }
         }
@@ -209,6 +237,9 @@ export default {
     };
   },
   methods: {
+    customChanged(){
+      if(!this.editedValue.customTopic) this.editedValue.useFunction = false;
+    },
     addProperty() {
       this.editedValue.payloadMap.push({});
     },

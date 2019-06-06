@@ -53,13 +53,12 @@
 <script>
 import { mapGetters } from "vuex";
 
-import DialogMap from "@/components/dialogs/map";
+import DialogMap from "@/components/dialogs/Map";
 import uniqid from "uniqid";
 
-const defaultValue = { payloadMap: [] }
+const defaultValue = { payloadMap: [], code: "" }
 
 export default {
-  name: "Settings",
   components: {
     DialogMap
   },
@@ -133,7 +132,8 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.maps.indexOf(item);
-      this.editedValue = Object.assign({}, item);
+      if(!item.code) item.code = "";
+      this.editedValue = JSON.parse(JSON.stringify(item));
       this.dialogValue = true;
     },
     deleteItem(item) {

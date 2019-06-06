@@ -27,3 +27,24 @@ body {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* Fix for syntax highlight (override Vuetify code props) */
+
+.prism-editor-wrapper code {
+  background-color: inherit;
+  color: #ccc;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  font-family: inherit;
+  line-height: inherit;
+  font-size: inherit;
+}
+
+.prism-editor-wrapper code::before {
+  content: "";
+  letter-spacing: 0px;
+}
+.prism-editor-wrapper code::after {
+  content: "";
+  letter-spacing: 0px;
+}

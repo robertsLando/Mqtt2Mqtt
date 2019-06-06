@@ -58,7 +58,6 @@ import uniqid from 'uniqid'
 import DialogClient from '@/components/dialogs/Mqtt_Client'
 
 export default {
-  name: "Settings",
   components:{
     DialogClient
   },

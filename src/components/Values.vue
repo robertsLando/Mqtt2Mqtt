@@ -54,7 +54,6 @@ import { mapGetters } from "vuex";
 import DialogValues from '@/components/dialogs/Value'
 
 export default {
-  name: "Settings",
   components:{
     DialogValues
   },
