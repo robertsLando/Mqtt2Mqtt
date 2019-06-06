@@ -62,7 +62,23 @@ Used to init a connection to an MQTT broker
 Set of rules to use for incoming/outgoing packets
 
 - **Name**: A unique name that identify the map.
-- **Custom Wildecard**: Enable this to customize the topic
+- **Custom Topic**: Enable this to customize the topic
+- **Use function**: Enable this to use a JS function to map topic and payload. The function takes 2 args `topic` and `payload` and expects a returned object like `{topic: "theNewTopic", payload: "theNewPayload"}`. **ATTENTION**: Returned topic and payload must be `string`.
+
+    Example code to write inside the function:
+
+    ```js
+    var parts = topic.split('/');
+    var sensor = parts.pop();
+    var data = {}
+
+    data[sensor] = JSON.parse(payload).value;
+
+    return {topic: topic, payload: JSON.stringify(data)}
+    ```
+
+    > This function takes last topic level and uses it as a payload attribute and uses the payload value as value for that attribute.
+- **Code**: If both custom Topic and Use functions flag are enabled this field will contain the JS code of the function used to map the topic
 - **Wildecard From**: The topic wildecard to use to identify packets that need to be parsed using this map.
 - **Wildecard To**: If custom wildecard is enabled this field is used to specify the wildecard to use to transform the original topic to the destination topic (more about this later).
 - **From suffix**: The suffix to add to the from wildecard. If a packet topic matches the wildecard but doesn't have this suffix it is discarded. This filed is needed because wildecards like `prefix/#/suffix` are not valid wildecards as after a # char the topic cannot have anything.
@@ -128,10 +144,28 @@ If you don't want to map all values coming from the gateway but just some values
 ## :pencil: TODOs
 
 - [ ] Dockerize application
-- [ ] Package application with PKG
+- [x] Package application with PKG
 - [ ] Publish/Subscribe topics on UI for testing
 - [ ] Unit tests
 - [ ] JSON validator for settings
+
+## :camera: Screenshots
+
+### Clients
+
+![Clients](images/screen_clients.png)
+
+### Values
+
+![Values](images/screen_values.png)
+
+### Maps
+
+![Maps](images/screen_maps.png)
+
+### Map Function
+
+![Function](images/screen_function.png)
 
 ## :bowtie: Author
 
