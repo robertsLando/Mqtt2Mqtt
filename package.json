@@ -23,7 +23,34 @@
     "start": "node bin/www",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "pkg": "sudo chmod +x package.sh && ./package.sh"
+    "pkg": "sudo chmod +x package.sh && ./package.sh",
+    "changelog": "auto-changelog && git add CHANGELOG.md",
+    "release": "read -p 'GITHUB_TOKEN: ' GITHUB_TOKEN && export GITHUB_TOKEN=$GITHUB_TOKEN && release-it"
+  },
+  "release-it": {
+    "github": {
+      "release": true,
+      "assets": [
+        "pkg/*.zip"
+      ]
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "scripts": {
+      "beforeStart": "npm run changelog",
+      "afterBump": "./package.sh --release"
+    },
+    "npm": {
+      "publish": false
+    }
+  },
+  "auto-changelog": {
+    "unreleased": true,
+    "commitLimit": false,
+    "replaceText": {
+      "^-[\\s]*": ""
+    }
   },
   "dependencies": {
     "aedes": "^0.38.0",
