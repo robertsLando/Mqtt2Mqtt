@@ -12,7 +12,7 @@
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.name }}</td>
-            <td>{{ props.item.wFrom + (props.item.customTopic ? ' ---> ' + props.item.wTo : '') }}</td>
+            <td>{{ props.item.wFrom + (props.item.customTopic ? ' ---> ' + (props.item.useFunction ?  'Function' : props.item.wTo ): '') }}</td>
             <td style="white-space:pre-wrap; word-wrap:break-word">{{ getMap(props.item) }}</td>
             <td>{{ props.item.qos }}</td>
             <td>{{ props.item.retain ? "Yes" : "No" }}</td>
@@ -107,6 +107,8 @@ export default {
     getMap(item) {
       var tmp = this.optionsPayload.find(e => e.value == item.payload);
       var result = tmp ? tmp.text : '';
+
+      if(item.useFunction) return "Custom Function"
 
       switch (item.payload) {
         case 0:
