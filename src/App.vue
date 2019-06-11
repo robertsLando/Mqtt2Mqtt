@@ -193,13 +193,14 @@ export default {
   data () {
     return {
       pages: [
-        { icon: 'wifi', title: 'MQTT Clients', path: '/' },
+        { icon: 'work', title: 'Broker', path: '/' },
+        { icon: 'wifi', title: 'MQTT Clients', path: '/clients' },
         { icon: 'local_offer', title: 'Values', path: '/values' },
         { icon: 'settings_ethernet', title: 'Maps', path: '/maps' }
       ],
       drawer: false,
       topbar: [],
-      title: 'MQTT Clients',
+      title: 'Broker',
       mini: true,
       snackbar: false,
       snackbarText: "",
@@ -244,6 +245,9 @@ export default {
 	watch: {
   	'$route': function(value) {
       switch (value.name) {
+        case 'Broker':
+        this.title = 'Broker';
+        break;
         case 'MqttClients':
         this.title = 'MQTT Clients';
         break;

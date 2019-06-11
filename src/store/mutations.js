@@ -1,13 +1,15 @@
 export const state = {
   clients: [],
   values: [],
-  maps: []
+  maps: [],
+  broker: {}
 }
 
 export const getters = {
   clients: state => state.clients,
   values: state => state.values,
   maps: state => state.maps,
+  broker: state => state.broker,
   configuration: state => JSON.parse(JSON.stringify(state))
 }
 
@@ -27,5 +29,6 @@ export const mutations = {
       state.clients = data.clients || [];
       state.values = data.values || [];
       state.maps = data.maps || [];
+      state.broker = data.broker || {};
   }
 }
