@@ -223,7 +223,6 @@ export default {
       }
     },
     download(text, filename) {
-      debugger;
       var element = document.createElement("a");
       element.setAttribute(
         "href",
