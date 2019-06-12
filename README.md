@@ -45,7 +45,7 @@ Once the app is running open the web browser to <http://localhost:8100.> Here yo
 
 ### Broker settings
 
-Used to set up the MQTT Broker
+Used to set up the MQTT Broker. To edit settings click on the fab button in the bottom right corner
 
 - **Port**: The port where the broker will listen for incoming connections
 - **Websocket**: Enable this to enable MQTT over websockets
@@ -59,7 +59,7 @@ Used to set up the MQTT Broker
 
 ### MQTT Clients
 
-Used to init a connection to an MQTT broker
+Used to init a connection to an MQTT broker. To add a new client connection click on the fab button in the bottom right corner
 
 - **Name**: A unique name that identify the Client.
 - **Host**: The url to the broker
@@ -71,9 +71,9 @@ Used to init a connection to an MQTT broker
 - **Maps Get**: List of maps to use for value updates coming from other gateways to forward to your broker
 - **Maps Set**: List of maps to use for value writes coming from your broker to forward to the gateways.
 
-## Maps
+### Maps
 
-Set of rules to use for incoming/outgoing packets
+Set of rules to use for incoming/outgoing packets. To add a new map click on the fab button in the bottom right corner
 
 - **Name**: A unique name that identify the map.
 - **Custom Topic**: Enable this to customize the topic
