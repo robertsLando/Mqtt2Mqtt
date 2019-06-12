@@ -165,19 +165,19 @@ If you don't want to map all values coming from the gateway but just some values
 
 ## :camera: Screenshots
 
-### Broker
+### Broker status
 
 ![Broker](images/screen_broker.png)
 
-### Clients
+### Clients table
 
 ![Clients](images/screen_clients.png)
 
-### Values
+### Values table
 
 ![Values](images/screen_values.png)
 
-### Maps
+### Maps table
 
 ![Maps](images/screen_maps.png)
 
