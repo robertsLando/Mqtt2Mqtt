@@ -16,14 +16,14 @@
                 <v-list-tile-content
                   :style="{color: (status.broker ? 'white' : 'red')}"
                   class="align-end"
-                >{{ status.broker ? "Listening - Port " + status.broker.port : status.brokerError }}</v-list-tile-content>
+                >{{ status.broker ? "Listening on " + status.broker.port : status.brokerError }}</v-list-tile-content>
               </v-list-tile>
               <v-list-tile>
                 <v-list-tile-content>Websocket</v-list-tile-content>
                 <v-list-tile-content
                   :style="{color: (status.websocket ? 'white' : 'red')}"
                   class="align-end"
-                >{{ status.websocket ? "Listening - Port " + status.websocket.port : status.wsError }}</v-list-tile-content>
+                >{{ status.websocket ? "Listening on " + status.websocket.port : status.wsError }}</v-list-tile-content>
               </v-list-tile>
               <v-list-tile>
                 <v-list-tile-content>SSL</v-list-tile-content>
@@ -35,16 +35,23 @@
               <v-list-tile v-if="status.ssl && status.key">
                 <v-list-tile-content>Key</v-list-tile-content>
                 <v-list-tile-content class="align-end">
-                  <v-icon @click.stop="download(status.key, 'key.pem')">get_app</v-icon>
+                  <v-tooltip bottom>
+                      <v-icon slot="activator" color="primary" @click.stop="download(status.key, 'key.pem')">get_app</v-icon>
+                    <span>Download</span>
+                  </v-tooltip>
                 </v-list-tile-content>
               </v-list-tile>
               <v-list-tile v-if="status.ssl && status.cert">
                 <v-list-tile-content>Cert</v-list-tile-content>
                 <v-list-tile-content class="align-end">
-                  <v-icon @click.stop="download(status.cert, 'cert.pem')">get_app</v-icon>
+                  <v-tooltip bottom>
+                      <v-icon slot="activator" color="primary" @click.stop="download(status.cert, 'cert.pem')">get_app</v-icon>
+                    <span>Download</span>
+                  </v-tooltip>
                 </v-list-tile-content>
               </v-list-tile>
             </v-list>
+            <v-divider></v-divider>
             <v-expansion-panel class="elevation-0">
               <v-expansion-panel-content>
                 <div slot="header">Settings</div>
@@ -59,7 +66,12 @@
                     required
                     type="number"
                   ></v-text-field>
-                  <v-switch :disabled="disabled" persistent-hint label="MQTT over Websockets" v-model="edited.websocket"></v-switch>
+                  <v-switch
+                    :disabled="disabled"
+                    persistent-hint
+                    label="MQTT over Websockets"
+                    v-model="edited.websocket"
+                  ></v-switch>
                   <v-text-field
                     v-if="edited.websocket"
                     :disabled="disabled"
@@ -71,7 +83,12 @@
                     required
                     type="number"
                   ></v-text-field>
-                  <v-switch :disabled="disabled" persistent-hint label="Require auth" v-model="edited.authenticate"></v-switch>
+                  <v-switch
+                    :disabled="disabled"
+                    persistent-hint
+                    label="Require auth"
+                    v-model="edited.authenticate"
+                  ></v-switch>
                   <v-text-field
                     v-if="edited.authenticate"
                     :disabled="disabled"
@@ -123,7 +140,11 @@
                     v-model="edited.cert"
                     @onFileSelect="onFileCertSelect"
                   ></file-input>
-                  <v-btn color="blue darken-1" flat @click="disabled ? disabled = false : validateSettings()">{{disabled ? 'Edit' : 'Update'}}</v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    flat
+                    @click="disabled ? disabled = false : validateSettings()"
+                  >{{disabled ? 'Edit' : 'Update'}}</v-btn>
                   <v-btn v-if="!disabled" color="blue darken-1" flat @click="undoEdits()">Cancel</v-btn>
                 </v-form>
               </v-expansion-panel-content>
@@ -202,13 +223,13 @@ export default {
     showSnackbar(text) {
       this.$emit("showSnackbar", text);
     },
-    undoEdits(){
-      this.edited = Object.assign({}, this.broker) 
-      this.disabled = true
+    undoEdits() {
+      this.edited = Object.assign({}, this.broker);
+      this.disabled = true;
     },
     validateSettings() {
       if (this.$refs.form_broker.validate()) {
-        this.$store.dispatch('updateBroker', this.edited);
+        this.$store.dispatch("updateBroker", this.edited);
         this.disabled = true;
         this.showSnackbar("Press save to update settings on server");
       } else {
