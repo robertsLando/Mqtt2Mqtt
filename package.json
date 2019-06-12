@@ -1,6 +1,6 @@
 {
   "name": "mqtt2mqtt",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "bin": "bin/www",
   "description": "Configurable Mqtt gateway",
   "author": "Daniel Lando <daniel.sorridi@gmail.com>",
