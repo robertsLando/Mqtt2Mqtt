@@ -23,5 +23,11 @@ export default{
       .then(response => {
         return response.data
       })
+  },
+  getStatus () {
+    return axios.get('/status')
+      .then(response => {
+        return response.data
+      })
   }
 }

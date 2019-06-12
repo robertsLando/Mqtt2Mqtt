@@ -47,6 +47,11 @@ app.post('/api/settings', function(req, res) {
   })
 })
 
+// get settings
+app.get('/api/status', function(req, res) {
+  res.json({success:true, status: broker.status()});
+})
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -74,6 +79,8 @@ process.on('SIGINT', function() {
   process.exit();
 });
 
-broker.init();
+// broker.init();
+
+setTimeout(broker.init, 5000)
 
 module.exports = app;

@@ -18,6 +18,9 @@ export const actions = {
     if(data){
       store.commit('initSettings', data);
     }
+  },
+  updateBroker(store, data){
+    store.commit('updateBroker', data);
   }
 }
 
@@ -30,5 +33,8 @@ export const mutations = {
       state.values = data.values || [];
       state.maps = data.maps || [];
       state.broker = data.broker || {};
+  },
+  updateBroker(state, data){
+    state.broker = data;
   }
 }
