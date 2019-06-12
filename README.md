@@ -41,7 +41,21 @@ npm start
 
 ## Usage
 
-Once the app is running open the web browser to <http://localhost:8100.> Here you need to declare the Mqtt clients, the maps and (optionally) the values.
+Once the app is running open the web browser to <http://localhost:8100.> Here you need to declare the Broker settings, Mqtt clients, the maps and (optionally) the values.
+
+### Broker settings
+
+Used to set up the MQTT Broker
+
+- **Port**: The port where the broker will listen for incoming connections
+- **Websocket**: Enable this to enable MQTT over websockets
+- **Websocket Port**:  The port where the websocket server will listen for incoming connections
+- **Require auth**: Enable this to enable broker authentication check
+- **Username/Password**: If auth is enabled insert here the username and the password to connect to this broker.
+- **SSL**: Enable this to enable SSL
+- **Self-Signed Certs**: When ssl is enabled, enable to allow self-signed certificates (used to set the flag `rejectAnauthorized`).
+- **Auto-generate certs**: When ssl is enabled, flag this to auto-generate certificates
+- **Key.pem/Cert.pem**: If auto-generate is disabled insert here the key and the certs files
 
 ### MQTT Clients
 
@@ -150,6 +164,10 @@ If you don't want to map all values coming from the gateway but just some values
 - [ ] JSON validator for settings
 
 ## :camera: Screenshots
+
+### Broker
+
+![Broker](images/screen_broker.png)
 
 ### Clients
 
