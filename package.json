@@ -38,7 +38,7 @@
       "tagName": "v${version}"
     },
     "hooks": {
-      "after:bump": "npm run changelog",
+      "before:init": "npm run changelog",
       "before:release": "./package.sh --release"
     },
     "npm": {
