@@ -99,8 +99,9 @@
                   :rules="[requiredKey]"
                   v-if="editedValue.ssl && !editedValue.autoGenerate"
                   label="Key.pem"
+                  keyProp="_key"
                   v-model="editedValue.key"
-                  @onFileSelect="onFileKeySelect"
+                  @onFileSelect="onFileSelect"
                 ></file-input>
               </v-flex>
               <v-flex xs12 sm6>
@@ -108,8 +109,9 @@
                   :rules="[requiredCert]"
                   v-if="editedValue.ssl && !editedValue.autoGenerate"
                   label="Cert.pem"
+                  keyProp="_cert"
                   v-model="editedValue.cert"
-                  @onFileSelect="onFileCertSelect"
+                  @onFileSelect="onFileSelect"
                 ></file-input>
               </v-flex>
             </v-layout>
@@ -188,18 +190,13 @@ export default {
       reader.onload = e => callback(e.target.result);
       reader.readAsText(file);
     },
-    onFileKeySelect(files) {
-      var file = files[0];
+    onFileSelect(data) {
+      var file = data.files[0];
       var self = this;
       if (file) {
-        this.readFile(file, text => (self.editedValue._key = text));
-      }
-    },
-    onFileCertSelect(files) {
-      var file = files[0];
-      var self = this;
-      if (file) {
-        this.readFile(file, text => (self.editedValue._cert = text));
+        this.readFile(file, text => (self.editedValue[data.key] = text));
+      } else {
+        self.editedValue[data.key] = "";
       }
     }
   },

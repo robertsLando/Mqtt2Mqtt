@@ -63,6 +63,38 @@
                   v-model="editedValue.clean"
                 ></v-switch>
               </v-flex>
+              <v-flex xs12 v-if="secure">
+                <v-switch
+                  hint="Enable this when using self signed certificates"
+                  persistent-hint
+                  label="Allow self signed certs"
+                  v-model="editedValue.allowSelfsigned"
+                ></v-switch>
+              </v-flex>
+              <v-flex xs12 sm6 md4 v-if="secure">
+                <file-input
+                  keyProp="_key"
+                  label="Key.pem"
+                  v-model="editedValue.key"
+                  @onFileSelect="onFileSelect"
+                ></file-input>
+              </v-flex>
+              <v-flex xs12 sm6 md4 v-if="secure">
+                <file-input
+                  label="Cert.pem"
+                  keyProp="_cert"
+                  v-model="editedValue.cert"
+                  @onFileSelect="onFileSelect"
+                ></file-input>
+              </v-flex>
+              <v-flex xs12 sm6 md4 v-if="secure">
+                <file-input
+                  keyProp="_ca"
+                  label="Ca.pem"
+                  v-model="editedValue.ca"
+                  @onFileSelect="onFileSelect"
+                ></file-input>
+              </v-flex>
               <v-flex xs12>
                 <v-switch
                   hint="Does this client require auth?"
@@ -160,8 +192,11 @@
 
 <script>
 import { mapGetters } from "vuex";
+import fileInput from "@/components/custom/file-input.vue";
+import url from "url";
 
 export default {
+  components: { fileInput },
   props: {
     value: Boolean,
     title: String,
@@ -174,6 +209,21 @@ export default {
   },
   computed: {
     ...mapGetters(["maps"]),
+    secure() {
+      if (!this.editedValue.host) return false;
+      const parsed = url.parse(this.editedValue.host);
+
+      const secure =
+        ["mqtts:", "wss:", "wxs:", "alis:", "tls:"].indexOf(parsed.protocol) >=
+        0;
+
+      if (!secure) {
+        this.editedValue.key = this.editedValue._key = this.editedValue.cert = this.editedValue._cert = this.editedValue.ca = this.editedValue._ca =
+          "";
+      }
+
+      return secure;
+    },
     requiredUser() {
       return (
         (this.editedValue.auth && !!this.editedValue.username) ||
@@ -191,7 +241,22 @@ export default {
     getItem(data) {
       var item = this.maps.find(m => m._id == data.item);
       return item ? item.name : data.item;
-    }
+    },
+    readFile(file, callback) {
+      const reader = new FileReader();
+
+      reader.onload = e => callback(e.target.result);
+      reader.readAsText(file);
+    },
+    onFileSelect(data) {
+      var file = data.files[0];
+      var self = this;
+      if (file) {
+        this.readFile(file, text => (self.editedValue[data.key] = text));
+      } else {
+        self.editedValue[data.key] = "";
+      }
+    },
   },
   data() {
     return {

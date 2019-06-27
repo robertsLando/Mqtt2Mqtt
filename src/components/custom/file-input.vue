@@ -1,12 +1,13 @@
 <template>
-  <div>
+  <v-layout row align-center>
     <v-text-field prepend-icon="attach_file" single-line
                   v-model="filename" :label="label.toUpperCase()" :required="required"
                   @click.native="onFocus"
                   :rules="rules"
                   :disabled="disabled" ref="fileTextField"></v-text-field>
+                  <v-btn style="margin:0" icon @click.stop="clearInput()"><v-icon>clear</v-icon></v-btn>
     <input style="position:absolute;left:-99999px;" type="file" :accept="accept" :multiple="multiple" :disabled="disabled" ref="fileInput" @change="onFileChange">
-  </div>
+  </v-layout>
 </template>
 
 <script>
@@ -17,6 +18,9 @@
       },
       rules: {
         type: [Array]
+      },
+      keyProp: {
+        type: String
       },
       accept: {
         type: String,
@@ -62,6 +66,12 @@
         }
         return forms
       },
+      clearInput() {
+        this.filename = null
+        this.$emit('input', this.filename)
+        this.$emit('onFileSelect', {files: [], key: this.keyProp})
+        this.$emit('formData', null)
+      },
       onFocus () {
         if (!this.disabled) {
           this.$refs.fileInput.click()
@@ -80,7 +90,7 @@
           this.filename = $event.target.value.split('\\').pop()
         }
         this.$emit('input', this.filename)
-        this.$emit('onFileSelect', files)
+        this.$emit('onFileSelect', {files: files, key: this.keyProp})
         this.$emit('formData', form)
       }
     }
