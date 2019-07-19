@@ -10,6 +10,7 @@ cors = require('cors'),
 config = reqlib('config/app.js'),
 debug = reqlib('/lib/debug')('App'),
 broker = reqlib('lib/broker'),
+history = require('connect-history-api-fallback'),
 utils = reqlib('/lib/utils.js');
 
 debug("Application path:" + utils.getPath(true));
@@ -17,6 +18,8 @@ debug("Application path:" + utils.getPath(true));
 // view engine setup
 app.set('views', utils.joinPath(utils.getPath(), 'views'));
 app.set('view engine', 'ejs');
+
+app.use(history());
 
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: "50mb"}));
