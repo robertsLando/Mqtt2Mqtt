@@ -1,153 +1,142 @@
 <template>
   <v-app dark>
-
     <v-navigation-drawer
-    clipped-left
-    permanent
-    stateless
-    disable-resize-watcher
-    :mini-variant.sync="mini"
-    v-model="drawer"
-    app
+      clipped-left
+      permanent
+      stateless
+      disable-resize-watcher
+      :mini-variant.sync="mini"
+      v-model="drawer"
+      app
     >
-    <v-toolbar flat class="transparent">
+      <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
             <v-list-tile-avatar>
-              <img style="border-radius: 0;" src="/static/logo.png" >
+              <img style="border-radius: 0;" src="/static/logo.png" />
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title>MQTT To MQTT</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-
-    </v-toolbar>
-    <v-divider></v-divider>
-    <v-list>
-      <v-list-tile
-      v-for="item in pages"
-      :key="item.title"
-      @click.stop="mini ? mini = true : mini = false"
-      :to="item.path == '#' ? '' : item.path"
-      >
-        <v-list-tile-action>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
-    <v-footer absolute v-if="!mini" class="pa-3">
-    <div>Innovation System &copy; {{ new Date().getFullYear() }}</div>
-  </v-footer>
-  </v-navigation-drawer>
-
-<v-toolbar fixed app>
-  <v-toolbar-side-icon @click.native.stop="mini = !mini"></v-toolbar-side-icon>
-  <v-toolbar-title>{{title}}</v-toolbar-title>
-
-  <v-spacer></v-spacer>
-
-  <v-menu v-for="item in items" :key="item.text" bottom left>
-      <v-btn slot="activator" icon @click.native="item.func">
-        <v-tooltip bottom>
-        <v-icon dark color="primary" slot="activator">{{item.icon}}</v-icon>
-        <span>{{item.tooltip}}</span>
-      </v-tooltip>
-      </v-btn>
-
-      <v-list v-if="item.menu">
+      </v-toolbar>
+      <v-divider></v-divider>
+      <v-list>
         <v-list-tile
-          v-for="(menu, i) in item.menu"
-          :key="i"
-          @click="menu.func"
+          v-for="item in pages"
+          :key="item.title"
+          @click.stop="mini ? mini = true : mini = false"
+          :to="item.path == '#' ? '' : item.path"
         >
-          <v-list-tile-title>{{ menu.title }}</v-list-tile-title>
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+          </v-list-tile-content>
         </v-list-tile>
       </v-list>
+      <v-footer absolute v-if="!mini" class="pa-3">
+        <div>Innovation System &copy; {{ new Date().getFullYear() }}</div>
+      </v-footer>
+    </v-navigation-drawer>
 
-    </v-menu>
+    <v-toolbar fixed app>
+      <v-toolbar-side-icon @click.native.stop="mini = !mini"></v-toolbar-side-icon>
+      <v-toolbar-title>{{title}}</v-toolbar-title>
 
-</v-toolbar>
-<main>
-  <v-content>
-      <router-view @import="importFile" @export="exportConfiguration" @showSnackbar="showSnackbar"/>
-  </v-content>
-</main>
+      <v-spacer></v-spacer>
 
-<v-snackbar
-     :timeout="3000"
-     :bottom="true"
-     :multi-line="false"
-     :vertical="false"
-     v-model="snackbar"
-   >
-     {{ snackbarText }}
-     <v-btn flat @click.native="snackbar = false">Close</v-btn>
-   </v-snackbar>
+      <v-menu v-for="item in items" :key="item.text" bottom left>
+        <v-btn slot="activator" icon @click.native="item.func">
+          <v-tooltip bottom>
+            <v-icon dark color="primary" slot="activator">{{item.icon}}</v-icon>
+            <span>{{item.tooltip}}</span>
+          </v-tooltip>
+        </v-btn>
 
-</v-app>
+        <v-list v-if="item.menu">
+          <v-list-tile v-for="(menu, i) in item.menu" :key="i" @click="menu.func">
+            <v-list-tile-title>{{ menu.title }}</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
+    <main>
+      <v-content>
+        <router-view
+          @import="importFile"
+          @export="exportConfiguration"
+          @showSnackbar="showSnackbar"
+        />
+      </v-content>
+    </main>
+
+    <v-snackbar
+      :timeout="3000"
+      :bottom="true"
+      :multi-line="false"
+      :vertical="false"
+      v-model="snackbar"
+    >
+      {{ snackbarText }}
+      <v-btn flat @click.native="snackbar = false">Close</v-btn>
+    </v-snackbar>
+  </v-app>
 </template>
 
 <script>
-
 import ConfigApis from "@/apis/ConfigApis";
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
-  name: 'app',
-  computed: mapGetters([
-    'configuration'
-  ]),
+  name: "app",
+  computed: mapGetters(["configuration"]),
   methods: {
-    showSnackbar: function(text){
+    showSnackbar: function(text) {
       this.snackbarText = text;
       this.snackbar = true;
     },
-    saveConfiguration: function(){
+    saveConfiguration: function() {
       var self = this;
-      ConfigApis.updateSettings(this.configuration).then(response => {
-        if(response.success) self.showSnackbar("New configuration successfully saved");
-        else{
-          self.showSnackbar(response.error.message);
-          console.log(response.error);
-        }
-      })
-      .catch(e => {
-        console.log(e);
-      })
+      ConfigApis.updateSettings(this.configuration)
+        .then(response => {
+          if (response.success)
+            self.showSnackbar("New configuration successfully saved");
+          else {
+            self.showSnackbar(response.error.message);
+            console.log(response.error);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
-    importConfiguration : function(){
+    importConfiguration: function() {
       var self = this;
 
       this.importFile((err, jsonObject) => {
-        if(!err){
-          self.$store.dispatch('init', jsonObject);
-          self.showSnackbar("Configuration loaded successfully")
+        if (!err) {
+          self.$store.dispatch("init", jsonObject);
+          self.showSnackbar("Configuration loaded successfully");
         }
       });
     },
-    importFile : function(callback)
-    {
+    importFile: function(callback) {
       var self = this;
       // Check for the various File API support.
-      if(window.File && window.FileReader && window.FileList && window.Blob)
-      {
-        var input = document.createElement('input');
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+        var input = document.createElement("input");
         input.type = "file";
-        input.addEventListener("change", function(event)
-        {
+        input.addEventListener("change", function(event) {
           var files = event.target.files;
 
-          if(files && files.length > 0)
-          {
+          if (files && files.length > 0) {
             var file = files[0];
             var reader = new FileReader();
 
-            reader.addEventListener("load", function(fileReaderEvent)
-            {
+            reader.addEventListener("load", function(fileReaderEvent) {
               var jsonObject = {};
               var err;
               var data = fileReaderEvent.target.result;
@@ -155,7 +144,9 @@ export default {
               try {
                 jsonObject = JSON.parse(data);
               } catch (e) {
-                self.showSnackbar("Error while parsing input file, check console for more info")
+                self.showSnackbar(
+                  "Error while parsing input file, check console for more info"
+                );
                 console.log(e);
                 err = e;
               }
@@ -165,42 +156,39 @@ export default {
 
             reader.readAsText(file);
           }
-
         });
 
         input.click();
-      }
-      else
-      {
-        alert('Unable to load a file in this browser.');
+      } else {
+        alert("Unable to load a file in this browser.");
       }
     },
-    exportConfiguration: function(){
-      var contentType = 'application/octet-stream';
-      var a = document.createElement('a');
+    exportConfiguration: function() {
+      var contentType = "application/octet-stream";
+      var a = document.createElement("a");
 
       var data = this.configuration;
 
-      var blob = new Blob([JSON.stringify(data)], {'type': contentType});
+      var blob = new Blob([JSON.stringify(data)], { type: contentType });
 
       document.body.appendChild(a);
       a.href = window.URL.createObjectURL(blob);
       a.download = "settings.json";
-      a.target="_self";
+      a.target = "_self";
       a.click();
     }
   },
-  data () {
+  data() {
     return {
       pages: [
-        { icon: 'work', title: 'Broker', path: '/' },
-        { icon: 'wifi', title: 'MQTT Clients', path: '/clients' },
-        { icon: 'local_offer', title: 'Values', path: '/values' },
-        { icon: 'settings_ethernet', title: 'Maps', path: '/maps' }
+        { icon: "work", title: "Broker", path: "/" },
+        { icon: "wifi", title: "MQTT Clients", path: "/clients" },
+        { icon: "local_offer", title: "Values", path: "/values" },
+        { icon: "settings_ethernet", title: "Maps", path: "/maps" }
       ],
       drawer: false,
       topbar: [],
-      title: 'Broker',
+      title: "",
       mini: true,
       snackbar: false,
       snackbarText: "",
@@ -213,25 +201,26 @@ export default {
         {
           icon: "file_upload",
           func: this.exportConfiguration,
-          tooltip: "Export Configuration",
+          tooltip: "Export Configuration"
         },
         {
           icon: "save",
           func: this.saveConfiguration,
           tooltip: "Save Configuration"
-        },
+        }
       ]
-    }
+    };
+  },
+  beforeMount() {
+    this.title = this.$route.name || "";
   },
   mounted() {
-    var self = this; 
+    var self = this;
 
     ConfigApis.getSettings()
       .then(data => {
         if (!data.success) {
-          self.showSnackbar(
-            "Error while retriving settings, check console"
-          );
+          self.showSnackbar("Error while retriving settings, check console");
           console.log(response);
         } else {
           self.$store.dispatch("init", data.settings);
@@ -242,25 +231,10 @@ export default {
         console.log(e);
       });
   },
-	watch: {
-  	'$route': function(value) {
-      switch (value.name) {
-        case 'Broker':
-        this.title = 'Broker';
-        break;
-        case 'MqttClients':
-        this.title = 'MQTT Clients';
-        break;
-        case 'Values':
-        this.title = 'Values';
-        break;
-        case 'Maps':
-        this.title = 'Maps';
-        break;
-        default:
-        this.title = '';
-      }
+  watch: {
+    $route: function(value) {
+      this.title = value.name || "";
     }
   }
-}
+};
 </script>
