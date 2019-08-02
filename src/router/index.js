@@ -24,7 +24,7 @@ export default new Router({
     },
     {
       path: '/clients',
-      name: 'MqttClients',
+      name: 'Mqtt Clients',
       component: MqttClients,
       props: true
     },
