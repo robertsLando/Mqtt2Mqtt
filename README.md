@@ -77,7 +77,7 @@ Set of rules to use for incoming/outgoing packets. To add a new map click on the
 
 - **Name**: A unique name that identify the map.
 - **Custom Topic**: Enable this to customize the topic
-- **Use function**: Enable this to use a JS function to map topic and payload. The function takes 2 args `topic` and `payload` and expects a returned object like `{topic: "theNewTopic", payload: "theNewPayload"}`. **ATTENTION**: Returned topic and payload must be `string`.
+- **Use function**: Enable this to use a JS function to map topic and payload. The function takes 2 args `topic` and `payload` and expects to return an object or an Array of objects like `{topic: "theNewTopic", payload: "theNewPayload"}`. If you return an Array of objects an MQTT message will be published for each Object in the Array using its payload and topic (qos, and retain flag are taken from map configuration). **ATTENTION**: Returned topic and payload must be `string`.
 
     Example code to write inside the function:
 
@@ -92,6 +92,42 @@ Set of rules to use for incoming/outgoing packets. To add a new map click on the
     ```
 
     > This function takes last topic level and uses it as a payload attribute and uses the payload value as value for that attribute.
+
+    Example that returns an Array.
+
+    ```js
+    var topic = topic.split('/');
+
+    topic[0] = "myPrefix";
+
+    topic = topic.join('/')
+    payload = JSON.parse(payload);
+
+    var res = []
+
+    for(const k in payload){
+        var p = JSON.stringify({value: payload[k]})
+        var t = topic + '/' + k
+        res.push({topic: t, payload: p})
+    }
+
+    return res
+    ```
+
+    > This example maps an incoming MQTT payload with a JSON key/value object into one MQTT message for each key of the payload with value the key value and the topic with the prefix changed and the key as suffix
+
+    Example of map:
+  
+    Topic: `prefix/multisensor/foo`
+
+    Payload: `{"temp": 10, "air": 20, "pressure": 50}`
+
+    Result:
+
+  - Topic: `prefix/multisensor/foo/temp` Payload: `"{"value": 10}"`
+  - Topic: `prefix/multisensor/foo/air` Payload: `"{"value": 20}"`
+  - Topic: `prefix/multisensor/foo/pressure` Payload: `"{"value": 50}"`
+
 - **Code**: If both custom Topic and Use functions flag are enabled this field will contain the JS code of the function used to map the topic
 - **Wildecard From**: The topic wildecard to use to identify packets that need to be parsed using this map.
 - **Wildecard To**: If custom wildecard is enabled this field is used to specify the wildecard to use to transform the original topic to the destination topic (more about this later).
