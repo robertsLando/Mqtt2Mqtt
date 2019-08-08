@@ -162,7 +162,7 @@
             </v-layout>
             <v-container v-if="editedValue.customTopic && editedValue.useFunction">
               <br>
-              <p>Write the function here. Args are <code>topic</code> and <code>payload</code>. The function must return a json <code>{topic : "mappedTopic", payload: "mappedPayload"}</code>. <b>Attention:</b> both payload and topic must be type of <code>string</code></p>
+              <p>Write the function here. Args are <code>topic</code> and <code>payload</code>. The function must return an <code>Object</code> or an <code>Array</code> of Objects like:<code>{topic : "the/topic", payload: "{"temp": 20}"}</code>. <b>Attention:</b> both payload and topic must be type of <code>string</code></p>
               <prism-editor :lineNumbers="true" v-model="editedValue.code" language="js" style="height:250px"></prism-editor>
             </v-container>
           </v-form>

@@ -81,11 +81,11 @@
                   :items="[0,1,2]"
                 ></v-select>
               </v-flex>
-              <v-flex xs12 sm6>
+              <v-flex xs12>
                 <v-autocomplete
                   v-model="editedValue.map_id"
-                  label="Payload map"
-                  hint="Select the map function to use for the payload. All other map values like retain qos and wildecard are ignored"
+                  label="Map"
+                  hint="Select the map function to use for the payload. If the map uses a function and Custom Topic is disable the function will be used also to map the topic. All other map values like retain qos and wildecard are ignored"
                   persistent-hint
                   required
                   item-text="name"
