@@ -1,14 +1,6 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer
-      clipped-left
-      permanent
-      stateless
-      disable-resize-watcher
-      :mini-variant.sync="mini"
-      v-model="drawer"
-      app
-    >
+    <v-navigation-drawer clipped-left :mini-variant="mini" v-model="drawer" app>
       <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
@@ -26,7 +18,6 @@
         <v-list-tile
           v-for="item in pages"
           :key="item.title"
-          @click.stop="mini ? mini = true : mini = false"
           :to="item.path == '#' ? '' : item.path"
         >
           <v-list-tile-action>
@@ -43,7 +34,7 @@
     </v-navigation-drawer>
 
     <v-toolbar fixed app>
-      <v-toolbar-side-icon @click.native.stop="mini = !mini"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="openDrawer"></v-toolbar-side-icon>
       <v-toolbar-title>{{title}}</v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -94,6 +85,15 @@ export default {
   name: "app",
   computed: mapGetters(["configuration"]),
   methods: {
+    openDrawer() {
+      if (this.$vuetify.breakpoint.xsOnly) {
+        this.mini = false;
+        this.drawer = !this.drawer;
+      } else {
+        this.mini = !this.mini;
+        this.drawer = true;
+      }
+    },
     showSnackbar: function(text) {
       this.snackbarText = text;
       this.snackbar = true;
@@ -216,6 +216,14 @@ export default {
   },
   mounted() {
     var self = this;
+
+    if (this.$vuetify.breakpoint.xsOnly) {
+      this.mini = false;
+      this.drawer = false;
+    } else {
+      this.drawer = true;
+      this.mini = true;
+    }
 
     ConfigApis.getSettings()
       .then(data => {
