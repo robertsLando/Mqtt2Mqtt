@@ -218,7 +218,8 @@ export default {
   mounted() {
     var self = this;
 
-    this.toggleDrawer();
+    if(this.$vuetify.breakpoint.lg || this.$vuetify.breakpoint.xl)
+      this.toggleDrawer();
 
     ConfigApis.getSettings()
       .then(data => {
