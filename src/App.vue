@@ -190,7 +190,7 @@ export default {
       drawer: false,
       topbar: [],
       title: "",
-      mini: true,
+      mini: false,
       snackbar: false,
       snackbarText: "",
       items: [
