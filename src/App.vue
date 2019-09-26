@@ -34,7 +34,7 @@
     </v-navigation-drawer>
 
     <v-toolbar fixed app>
-      <v-toolbar-side-icon @click="openDrawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="toggleDrawer"></v-toolbar-side-icon>
       <v-toolbar-title>{{title}}</v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -85,14 +85,15 @@ export default {
   name: "app",
   computed: mapGetters(["configuration"]),
   methods: {
-    openDrawer() {
-      if (this.$vuetify.breakpoint.xsOnly) {
-        this.mini = false;
-        this.drawer = !this.drawer;
-      } else {
-        this.mini = !this.mini;
-        this.drawer = true;
-      }
+    toggleDrawer() {
+      if(['xs', 'sm', 'md'].indexOf(this.$vuetify.breakpoint.name) >= 0) {
+          this.mini = false;
+          this.drawer = !this.drawer;
+        }
+        else {
+          this.mini = !this.mini
+          this.drawer = true;
+        }
     },
     showSnackbar: function(text) {
       this.snackbarText = text;
@@ -217,13 +218,7 @@ export default {
   mounted() {
     var self = this;
 
-    if (this.$vuetify.breakpoint.xsOnly) {
-      this.mini = false;
-      this.drawer = false;
-    } else {
-      this.drawer = true;
-      this.mini = true;
-    }
+    this.toggleDrawer();
 
     ConfigApis.getSettings()
       .then(data => {
