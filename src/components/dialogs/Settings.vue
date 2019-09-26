@@ -114,6 +114,47 @@
                   @onFileSelect="onFileSelect"
                 ></file-input>
               </v-flex>
+              <v-flex xs12>
+                <v-switch
+                  persistent-hint
+                  label="Clients status"
+                  v-model="editedValue.clientsStatus"
+                  hint="Enable this to send messages when a client connect/disconnetc"
+                ></v-switch>
+              </v-flex>
+              <v-flex v-if="editedValue.clientsStatus" xs12>
+                <v-layout wrap>
+                  <v-subheader>Status packets</v-subheader>
+                  <v-flex xs12>
+                    <v-text-field
+                      v-model.trim="editedValue.statusTopic"
+                      label="Status topic"
+                      :rules="[requiredTopic]"
+                      hint="The topic to publis status updates. $ID will be replaced with client id. Ex myPrefix/$ID/status"
+                      required
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6>
+                    <v-switch
+                      v-model="editedValue.statusRetain"
+                      label="Retain"
+                      hint="The retain flag of status packet"
+                      persistent-hint
+                      required
+                    ></v-switch>
+                  </v-flex>
+                  <v-flex xs12 sm6>
+                    <v-select
+                      v-model="editedValue.statusQos"
+                      label="QoS"
+                      hint="Quality of service of status packet"
+                      persistent-hint
+                      required
+                      :items="[0,1,2]"
+                    ></v-select>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
             </v-layout>
           </v-form>
         </v-container>
@@ -157,6 +198,13 @@ export default {
         !this.editedValue.authenticate ||
         (!!this.editedValue.username && !!this.editedValue.password) ||
         "Insert valid username and password"
+      );
+    },
+    requiredTopic() {
+      return (
+        !this.editedValue.clientsStatus ||
+        !!this.editedValue.statusTopic ||
+        "This is required"
       );
     },
     requiredKey() {
