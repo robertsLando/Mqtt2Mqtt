@@ -55,7 +55,7 @@
   "dependencies": {
     "aedes": "^0.40.1",
     "app-root-path": "^2.2.1",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "axios-progress-bar": "^1.2.0",
     "babel-polyfill": "^6.26.0",
     "bluebird": "^3.5.4",
