@@ -53,7 +53,7 @@
     }
   },
   "dependencies": {
-    "aedes": "^0.38.0",
+    "aedes": "^0.40.1",
     "app-root-path": "^2.2.1",
     "axios": "^0.18.0",
     "axios-progress-bar": "^1.2.0",
